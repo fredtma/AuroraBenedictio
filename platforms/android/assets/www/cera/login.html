@@ -1,0 +1,26 @@
+<div class="modal">
+  <ion-header-bar class="bar-dark nav-title-slide-ios7" align-title="left">
+    <h1 class="title">Login</h1>
+    <div class="buttons">
+      <button class="button button-icon icon ion-ios7-close-empty text-assertive" style="font-weight:bold; font-size:0.5em" ng-click="loginHide()"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content scroll="false" padding="false">
+    <form ng-submit="loginValidate()">
+      <div class="list">
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Username</span>
+          <input type="text" ng-model="loginData.username" placeholder="Enter your email or username">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Password</span>
+          <input type="password" ng-model="loginData.password" placeholder="Enter your password">
+        </label>
+        <label class="item item-full-length">
+          <button class="button button-full button-sky" type="submit">Log in</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</div>
+

@@ -1,0 +1,75 @@
+/*
+    Created on : 03 Jul 2014, 1:55:14 PM
+    Author     : ftshimanga
+*/
+.dash {
+  text-decoration: none; }
+  @media all and (max-width: 480px) {
+    .dash {
+      float: none;
+      width: 100%; } }
+  @media all and (min-width: 480px) {
+    .dash {
+      float: left;
+      width: 46%; } }
+  @media all and (min-width: 1200px) {
+    .dash {
+      float: left;
+      width: 48.3%; } }
+
+.bar-small {
+  height: 22px;
+  padding: 1px 15px; }
+  .bar-small h5 {
+    color: red;
+    margin: 0;
+    font-weight: 100;
+    font-style: italic; }
+
+.item-full-length {
+  padding-left: 0px;
+  margin-left: 0px;
+  padding-right: 0px;
+  margin-right: 0px;
+  width: 100%; }
+  .item-full-length .input-label {
+    padding-left: 8px; }
+
+.user-avatar {
+  padding: 0px;
+  margin-top: -5px; }
+  .user-avatar img {
+    height: 35px;
+    border-radius: 50%; }
+  .user-avatar h2, .user-avatar h3 {
+    color: white;
+    font-size: 14px;
+    margin: 0px;
+    padding: 0px; }
+  .user-avatar h3 {
+    font-size: 12px; }
+
+img.grey {
+  filter: gray;
+  /* IE6-9 */
+  -webkit-filter: grayscale(1);
+  /* Google Chrome, Safari 6+ & Opera 15+ */
+  -webkit-box-shadow: 0px 2px 6px 2px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 6px 2px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 2px 6px 2px rgba(0, 0, 0, 0.75);
+  margin-bottom: 20px; }
+
+img.grey:hover {
+  filter: none;
+  /* IE6-9 */
+  -webkit-filter: grayscale(0);
+  /* Google Chrome, Safari 6+ & Opera 15+ */ }
+
+.button.icon-modified {
+  top: 2px;
+  height: 20px; }
+
+.button.icon-modified:before {
+  line-height: 30px; }
+
+/*# sourceMappingURL=index.css.map */

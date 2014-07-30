@@ -1,0 +1,11 @@
+<ion-view title="Articles">
+   <ion-content class="has-header">
+      <div class="item item-divider item-icon-left"><i class="icon ion-archive"></i>List of Articles</div>
+      <ion-list show-reorder="true" can-swipe="true">
+         <ion-item ng-repeat="article in articles.data" type="item-text-wrap" href="#/call/article/{{article.name}}" class="item item-avatar">
+            <img src="{{article.src}}" /><h2 ng-bind="article.name"></h2><p ng-bind="article.desc"></p>
+            <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(article, $fromIndex, $toIndex)"></ion-reorder-button>
+         </ion-item>
+      </ion-list>
+   </ion-content>
+</ion-view>

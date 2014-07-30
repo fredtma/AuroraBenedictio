@@ -1,0 +1,51 @@
+<ion-view title="{{title}}">
+   <ion-content has-header="true" has-bouncing="false" padding="true" on-swipe-up="action()">
+      <div class="list list-inset">
+         <div class="item item-icon-left item-divider"><i class="icon ion-ios7-photos-outline"></i>Profile Image</div>
+         <a class="item item-avatar" href="#">
+            <img src="img/article/photo.jpg"  ng-click="getPicture($event)" /><h2>Avatar</h2><p>Tap image to edit</p>
+         </a>
+         <div class="item item-icon-left item-divider"><i class="icon ion-ios7-person-outline"></i>Profile Details</div>
+         <label class="item item-input item-floating-label"><span class="input-label">Name & Surname</span><input type="text" placeholder="Profile's Name" ng-model="father.name.alpha" /></label>
+         <label class="item item-input item-floating-label"><span class="input-label">Email</span><input type="email" placeholder="Your Email" ng-model="father.email" /></label>
+         <label class="item item-input item-stacked-label">
+            <span class="input-label">Gender</span>
+            <ion-toggle ng-model="father.gender" toggle-class="toggle-calm" style="border:none;"  >{{!father.gender.alpha?"Female":"Male"}}</ion-toggle>
+         </label>
+         <lable class="item item-input range range-royal">
+            <span class="input-label" ng-bind="'Birth Year:&nbsp;&nbsp;&nbsp;&nbsp;'+father.year"></span>
+            <i class="icon ion-ios7-calendar-outline"></i>
+            <input type="range" name="year" min="1930" max="2005"  ng-model="father.year"  />
+            <i class="icon ion-ios7-calendar"></i>
+         </lable>
+         <lable class="item item-input range range-balanced">
+            <span class="input-label" ng-bind="'Birth Month: '+father.month"></span>
+            <i class="icon ion-ios7-calendar-outline"></i>
+            <input type="range" name="month" min="1" max="12" ng-model="father.month"  />
+            <i class="icon ion-ios7-calendar"></i>
+         </lable>
+         <lable class="item item-input range range-calm">
+            <span class="input-label" ng-bind="'Birth Day:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+father.day"></span>
+            <i class="icon ion-ios7-calendar-outline"></i>
+            <input type="range" name="day" min="1" max="31" ng-model="father.day"  />
+            <i class="icon ion-ios7-calendar"></i>
+         </lable>
+         <div class="item item-icon-left item-divider item-button-right" style="height:40px;vertical-align: top;">
+            <i class="icon ion-ios7-telephone-outline"></i>
+            Contact Details
+            <button class="button button-calm button-clear icon-left ion-plus-circled icon-modified" ng-click="showMe('contact')">Add</button>
+         </div>
+         <div ng-if="display.contact" class="button-bar" >
+            <a class="button button-outline button-positive" ng-click="addChild('contact','mobile')">Mobile</a>
+            <a class="button button-outline button-royal" ng-click="addChild('contact','fixed')">Fixed</a>
+            <a class="button button-outline button-balanced" ng-click="addChild('contact','fax')">Fax</a>
+            <a class="button button-outline button-calm" ng-click="addChild('contact','work')">Work</a>
+            <a class="button button-outline button-silver" ng-click="addChild('contact','other')">other</a>
+         </div>
+         <label ng-repeat="sub in child.contact" class="item item-input item-floating-label">
+            <span class="input-label" style="text-transform: capitalize;" ng-bind="sub.type"></span>
+            <input type="tel" placeholder="New {{sub.type}} number" ng-model="sub.number" />
+         </label>
+      </div>
+   </ion-content>
+</ion-view>

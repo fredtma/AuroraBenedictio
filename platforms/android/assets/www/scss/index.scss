@@ -1,0 +1,51 @@
+/*
+    Created on : 03 Jul 2014, 1:55:14 PM
+    Author     : ftshimanga
+*/
+@import "ionic/variables";
+$white:  #ffffff;
+$red:    #ff0000;
+$grey:   #777;
+//============================================================================//
+//MODIFY CLASSES
+//============================================================================//
+//card used on the dashboard
+.dash {
+   text-decoration: none;
+   @media all and (max-width: 480px) {float:none; width:100%;}
+   @media all and (min-width: 480px) {float:left; width:46%;}
+   @media all and (min-width: 1200px) {float:left;width:48.3%;}
+}
+//notification msg
+.bar-small {height:22px; padding: 1px 15px;
+   h5 {color:$red;margin: 0;font-weight: 100;font-style: italic;}
+}
+//used in application form to make checkbox, radio and other to the full length of the screen
+.item-full-length {padding-left: 0px; margin-left:0px;padding-right: 0px; margin-right:0px; width:100%;
+   .input-label {padding-left:8px;}
+}
+//the login avatar
+.user-avatar{padding:0px; margin-top:-5px;
+   img {height:35px;border-radius: 50%;}
+   h2,h3 {color:white;font-size:14px;margin:0px;padding:0px;}
+   h3 {font-size:12px;}
+}
+//============================================================================//
+//CUSTOMES CLASSES
+//============================================================================//
+//creates a grey scall image
+img.grey {
+    filter: gray; /* IE6-9 */
+    -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
+    -webkit-box-shadow: 0px 2px 6px 2px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 2px 6px 2px rgba(0,0,0,0.75);
+    box-shadow: 0px 2px 6px 2px rgba(0,0,0,0.75);
+    margin-bottom: 20px;
+}
+img.grey:hover {
+    filter: none; /* IE6-9 */
+    -webkit-filter: grayscale(0); /* Google Chrome, Safari 6+ & Opera 15+ */
+}
+//changes the layout of the icon button
+.button.icon-modified{top:2px;height:20px;}
+.button.icon-modified:before{line-height: 30px;}
