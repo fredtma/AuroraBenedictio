@@ -15,35 +15,38 @@ angular.module('AlphaOmega.services',['ngResource'])
 function online($resource,$http) {
    var isViewLoading={"width": "100%", "display": "block"};
 
-   this.notitia=function(basilia,params,callback){
-      var view = ",:view,:jesua,:mensa";
+   this.notitia=function(params){
+      var view = ",:action,:view,:jesua,:mensa";
       params   = params||{};
-      basilia  = basilia||dynamis.get("quaerere");
       var service = $resource(dynamis.get("SITE_MILITIA")+view, params, {"militia": {"method": "POST", isArray: false, "cache": false, "responseType": "json", "withCredentials": true}});
-iyona.deb("SERVICE",service);
+      iyona.deb("SERVICE",service);
+      return service;
+   }//endufntion notitia
+
+   this.verify=function(server){
       if (dynamis.get("SITE_CONFIG").isOnline && dynamis.get("SITE_CONFIG").Online) {
          checkConnection();//@todo: check connection mobile & desktop
-         service.militia(basilia, function(j) {
-            isViewLoading = {"display": "none"};
-            if (j.notitia && (typeof j.notitia.sql !== "undefined" || typeof j.notitia.quaerre !== "undefined")) iyona.info("QUAERRE", j.notitia.sql || j.notitia.quaerre);
-            if (j.notitia && j.notitia.idem != '0') {
+         isViewLoading = {"display": "none"};
+            if (server.notitia && (typeof server.notitia.sql !== "undefined" || typeof server.notitia.quaerre !== "undefined")) iyona.info("QUAERRE", server.notitia.sql || server.notitia.quaerre);
+            if (server.notitia && server.notitia.idem !== 0) {//cookie
                var u = dynamis.get("USER_NAME", true) || {};
-               u.cons = j.notitia.idem;
+               u.cons = server.notitia.idem;
                dynamis.set("USER_NAME", u, true)
             }//pour maitre un autre biscuit
-            iyona.info(j, 'Online');
-            if (typeof callback == "function")callback(j);
-         });
+         iyona.info(server, 'Online');
+         return server;
+         if (typeof callback == "function")callback(server);
       }//endif online
       else{
          iyona.msg("You are currently offline", true, "danger bold");
          isViewLoading = {"display": "none"};
+         return false;
       }
-   }//endufntion notitia
+   }//end verify
 
    this.responseType=this.responseType||"json";
-   if(dynamis.get("SITE_CONFIG").isOnline && dynamis.get("SITE_CONFIG").Online){iyona.msg("Your device is currently Offline.",true,"danger bold"); return false;}//@todo
    this.post=function(url,params,callback){
+      if(dynamis.get("SITE_CONFIG").isOnline && dynamis.get("SITE_CONFIG").Online){iyona.msg("Your device is currently Offline.",true,"danger bold"); return false;}//@todo
       $http.post(url,params,{"responseType":this.responseType,"cache":true,"headers":{"Content-Type":"application/x-www-form-urlencoded"},"withCredentials":true})
       .success(function(server){isViewLoading = {"display":"none"};callback(server);})
       .error(function(data,status,headers,config){isViewLoading = {"display":"none"};
@@ -123,11 +126,12 @@ function helper($ionicPopup,$ionicActionSheet){
 //CRUD                                                                        //
 //############################################################################//
 function crud(online,helper,$stateParams,$log,$timeout){
-   var that=this,$scope,curNode,curMensa,curDisplay,curTitle;
+   var that=this,$db,$scope,curNode,curMensa,curDisplay,curTitle,curName;
 
    this.set=function(scope,node,display){
 
       $scope      = scope;
+      curName     = node;
       curNode     = eternalCall(node,display);
       curMensa    = curNode.mensa;
       curDisplay  = curNode.display;
@@ -147,7 +151,12 @@ function crud(online,helper,$stateParams,$log,$timeout){
          $scope.service.title = curTitle;
       }
       helper.set(scope,node,display);//set the module on the $scope.module property
-
+      $db = online.notitia();
+   }
+   function sigma(){
+      $db.get({"action":"notitia","mensa":curName,"jesua":""},function(){
+         
+      });
    }
    function alpha(node){iyona.info("Creating a new record");
 
