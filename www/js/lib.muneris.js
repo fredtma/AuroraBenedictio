@@ -39,6 +39,7 @@ configuration.prototype.config=function(){
    sessionStorage.SITE_TIME   = 'mediumTime';
    sessionStorage.SITE_LOCA   = 'benedictio';
    sessionStorage.SITE_URL    = 'https://demo.xpandit.co.za/aura/';
+   sessionStorage.SITE_API    = sessionStorage.SITE_URL+i;
    sessionStorage.SITE_SERVICE= sessionStorage.SITE_URL+i+'services';
    sessionStorage.SITE_MILITIA= sessionStorage.SITE_URL+i+'notitia';
    sessionStorage.SITE_ALPHA  = sessionStorage.SITE_URL+i+'alpha';
@@ -68,7 +69,8 @@ configuration.prototype.config=function(){
       "chromeApp":      (typeof chrome !== "undefined" && typeof chrome.app.window!=="undefined")
    };
    sessionStorage.SITE_CONFIG   = JSON.stringify(conf);
-   iyona.sync({"url":sessionStorage.SITE_URL+'json/benedictio.json',"method":"get","format":"json","callback":function(data){iyona.deb("defaultScope-",data);
+   iyona.sync({"url":sessionStorage.SITE_URL+'json/caecus-benedictio.json',"method":"get","format":"json","callback":function(data){
+      iyona.off("eternalScope-",data);
       dynamis.set("eternal",data,true);
    }});
    dynamis.set("EXEMPLAR",{
@@ -138,6 +140,8 @@ iyona={
          this.cons.apply(console,arguments);
       }
    }/*break down all set var into arr, custom debug msg re-created*/,
+   off:  function(){},
+   on:   this.deb,
    sync: function(settings){//{method,format,url,params,callback}
       var xhr=new XMLHttpRequest(),params;
 
@@ -386,8 +390,8 @@ function impetroUser(){
  */
 function setQuaerere(mensa,res,tau,consuetudinem) {
     var procus=impetroUser(),moli=screen.height*screen.width,cons=consuetudinem||0;
-    var quaerere=JSON.stringify({"eternal":res,"Tau":tau,"mensa":mensa,"procus":procus.jesua||0,"moli":moli,"consuetudinem":cons,"cons":procus.cons||0,"location":sessionStorage.SITE_LOCA});
-    dynamis.set("quaerere",quaerere);
+    var quaerere={"eternal":res,"Tau":tau,"mensa":mensa,"procus":procus.jesua||0,"moli":moli,"consuetudinem":cons,"cons":procus.cons||0,"location":sessionStorage.SITE_LOCA};
+    dynamis.set("quaerere",JSON.stringify(quaerere));
     return quaerere;
 }
 //=============================================================================//

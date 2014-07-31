@@ -16,32 +16,29 @@ function online($resource,$http) {
    var isViewLoading={"width": "100%", "display": "block"};
 
    this.notitia=function(params){
-      var view = ",:action,:view,:jesua,:mensa";
+      var view = ":call,:view,:jesua,:mensa,:display";
       params   = params||{};
-      var service = $resource(dynamis.get("SITE_MILITIA")+view, params, {"militia": {"method": "POST", isArray: false, "cache": false, "responseType": "json", "withCredentials": true}});
-      iyona.deb("SERVICE",service);
-      return service;
-   }//endufntion notitia
-
-   this.verify=function(server){
+      checkConnection();//@todo: check connection mobile & desktop
       if (dynamis.get("SITE_CONFIG").isOnline && dynamis.get("SITE_CONFIG").Online) {
-         checkConnection();//@todo: check connection mobile & desktop
-         isViewLoading = {"display": "none"};
-            if (server.notitia && (typeof server.notitia.sql !== "undefined" || typeof server.notitia.quaerre !== "undefined")) iyona.info("QUAERRE", server.notitia.sql || server.notitia.quaerre);
-            if (server.notitia && server.notitia.idem !== 0) {//cookie
-               var u = dynamis.get("USER_NAME", true) || {};
-               u.cons = server.notitia.idem;
-               dynamis.set("USER_NAME", u, true)
-            }//pour maitre un autre biscuit
-         iyona.info(server, 'Online');
-         return server;
-         if (typeof callback == "function")callback(server);
-      }//endif online
-      else{
+         var service = $resource(dynamis.get("SITE_API")+view, params, {"militia": {"method": "POST", isArray: false, "cache": false, "responseType": "json", "withCredentials": true}});
+         iyona.deb("SERVICE",service);
+         return service;
+      }else{
          iyona.msg("You are currently offline", true, "danger bold");
          isViewLoading = {"display": "none"};
          return false;
       }
+   }//endufntion notitia
+
+   this.verify=function(server){
+      isViewLoading = {"display": "none"};
+      if (server.notitia && (typeof server.notitia.sql !== "undefined" || typeof server.notitia.quaerre !== "undefined")) iyona.info("QUAERRE", server.notitia.sql || server.notitia.quaerre);
+      if (server.notitia && server.notitia.idem !== 0) {//cookie
+         var u = dynamis.get("USER_NAME", true) || {};
+         u.cons = server.notitia.idem;
+         dynamis.set("USER_NAME", u, true)
+      }//pour maitre un autre biscuit
+      if(typeof server.notitia !=="undefined" && typeof server.notitia.iota !=="undefined") return server; else {iyona.err('Online error',server);return false;}
    }//end verify
 
    this.responseType=this.responseType||"json";
@@ -126,50 +123,83 @@ function helper($ionicPopup,$ionicActionSheet){
 //CRUD                                                                        //
 //############################################################################//
 function crud(online,helper,$stateParams,$log,$timeout){
-   var that=this,$db,$scope,curNode,curMensa,curDisplay,curTitle,curName;
+   var that=this,$db,$scope,curNode,curMensa,curDisplay,curTitle,nodeName,nodeDisplay,RECORD;
 
    this.set=function(scope,node,display){
 
       $scope      = scope;
-      curName     = node;
+      nodeName    = node;
+      nodeDisplay = display;
       curNode     = eternalCall(node,display);
       curMensa    = curNode.mensa;
       curDisplay  = curNode.display;
       curTitle    = curNode.title;
       $scope.module = typeof $scope.module!=="undefined"?$scope.module:{};
       //setup on $scope the module, service, father, child
-      angular.extend($scope,{"father":curDisplay.fields,"child":curDisplay.child,"service":{"title":"New "+curTitle}});
-      $scope.service.Tau   = "Alpha";
-
-      $scope.module.submit = function(){ if(typeof $scope.module.alpha==="function")$scope.module.alpha(function(){alpha(node)}); else alpha(node);}
-      $scope.module.delete = function(){ if(typeof $scope.module.omega==="function")$scope.module.omega(function(){omega(node)}); else omega();}
-
-      if($stateParams.jesua!==null && $stateParams.jesua!==""){
-         $scope.module.submit = function(){ if(typeof $scope.module.delta==="function")$scope.module.delta(function(){delta(node)}); else delta();}
-         $scope.service.jesua = $stateParams.jesua;
-         $scope.service.Tau   = "deLta";
-         $scope.service.title = curTitle;
-      }
+      angular.extend($scope,{"father":curDisplay.fields,"child":curDisplay.child,"service":{"title":curTitle}});
       helper.set(scope,node,display);//set the module on the $scope.module property
-      $db = online.notitia();
-   }
-   function sigma(){
-      $db.get({"action":"notitia","mensa":curName,"jesua":""},function(){
-         
-      });
-   }
-   function alpha(node){iyona.info("Creating a new record");
+      $db = online.notitia({"view":"form","call":"benedictio","mensa":nodeName,"display":nodeDisplay});
 
-      var consuetudinem = {"uProfile":node};iyona.deb("SERVICE ALPHA",$scope.father,node);
-      var basilia = setQuaerere(node,$scope.father,$scope.service.Tau,consuetudinem);
-      online.notitia(basilia,null,function(server){
-         iyona.info(server,"data from server");
-         $scope.$parent.msg      = (typeof $scope.$parent.msg !=="undefined")?$scope.$parent.msg:{};
-         iyona.deb("VALUES",$scope);
-         $scope.$parent.msg.text = "passed value";
-         $scope.$parent.msg.err  = false;
+      $scope.module.delete = function(){ if(typeof $scope.module.omega==="function")$scope.module.omega(function(){omega()}); else omega();}
+      if($stateParams.jesua==="new" || $stateParams.jesua==="") {
+         $stateParams.jesua = null;$scope.service.Tau = "Alpha";$scope.service.title = "New "+curTitle;
+         $scope.module.submit = function(){ if(typeof $scope.module.alpha==="function")$scope.module.alpha(function(){alpha()}); else alpha();}
+      }
+      if($stateParams.jesua==="list"){
+         $stateParams.jesua = null;$scope.service.Tau = "sigma";
+         sigma();
+      }
+      if($stateParams.jesua!==null && $stateParams.jesua!==""){
+         $scope.service.jesua = $stateParams.jesua;$scope.service.Tau = "deLta";
+         $scope.module.submit = function(){ if(typeof $scope.module.delta==="function")$scope.module.delta(function(){delta()}); else delta();}
+         sigma($stateParams.jesua);
+      }//end if updating
+
+   };//end function set
+
+   function sigma(jesua){ if($db===false) return;
+      RECORD = new $db.get({"jesua":jesua},function(server){
+         if(online.verify(server)===false)return;
+         var iota = server.notitia.iota[0];
+
+         for(var key in iota){//merge the result with defaultScope setting
+            if (iota[key]!==null&&typeof $scope.father[key]!=="undefined"&&$scope.father[key].hasOwnProperty("alpha")){
+               //for enumerators get index
+               if(typeof $scope.father[key].enum!=="undefined") {$scope.father[key].alpha = $scope.father[key].enum.indexOf(iota[key]);}
+               else $scope.father[key].alpha = iota[key];
+            }
+            else $scope.father[key]=iota[key];
+         }
+         iyona.deb("Server sigma",server,$scope.father);
       });
-   }
-   function delta(){iyona.info("Updating a record");}
-   function omega(){iyona.info("Deleting the record");}
+      iyona.deb("RECORD",RECORD);
+   }//end function sigma
+   function alpha(){iyona.info("Creating a new record");
+      var consuetudinem;
+      var basilia = setQuaerere(nodeName,$scope.father,$scope.service.Tau,consuetudinem);
+      RECORD  = new $db();
+      angular.extend(RECORD,basilia);
+      RECORD.$save();
+      iyona.deb(RECORD,basilia);
+      /*
+      $scope.$parent.msg      = (typeof $scope.$parent.msg !=="undefined")?$scope.$parent.msg:{};
+      iyona.deb("VALUES",$scope);
+      $scope.$parent.msg.text = "passed value";
+      $scope.$parent.msg.err  = false;
+      */
+   }//end function alpha
+   function delta(){iyona.info("Updating a record");
+      var consuetudinem;
+      var basilia = setQuaerere(nodeName,$scope.father,$scope.service.Tau,consuetudinem);
+      RECORD.get({"jesua":$stateParams.jesua},function(server){
+         angular.extend(server,basilia);
+         server.$save();
+         iyona.deb(RECORD,basilia);
+      });
+
+
+//      iyona.deb(RECORD,basilia);
+//      RECORD.$save(RECORD,function(server){iyona.deb("SAVED",server);});
+   }//end function delta
+   function omega(){iyona.info("Deleting the record");}//end function omega
 }

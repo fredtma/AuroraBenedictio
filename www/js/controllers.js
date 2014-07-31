@@ -121,10 +121,10 @@ function ArticleLogsCtrl($scope,$stateParams,$ionicActionSheet,crud) {
    crud.set($scope,'article-logs','details');
    var num,article,articles = $scope.articles.data;
    for(num in  articles ){article=articles[num]; if (article.name===$stateParams.jesua){$scope.article = article;break;} }
-
-   $scope.module.alpha=function(alpha){
+iyona.deb("SCOPE",$scope.father);
+   $scope.module.alpha=function(callback){
       $scope.father.code = $scope.father.code||uRand(5,true,true,true);iyona.deb("ALPHA",$scope.father);
-      alpha.call();//call the service function
+      callback.call();//call the service function
    }
 }
 //============================================================================//
