@@ -131,8 +131,8 @@ iyona={
    msg:  function(msg,permanent,clss){
       console.info(arguments);
       clss=clss||'';
-      _$("#notification span").html(msg).removeClass().addClass('blink_me '+clss);
-      if(permanent!==true)setTimeout(function(){_$("#notification span").html("...").removeClass('blink_me');},5000);
+      _$("#notification").html(msg).removeClass().addClass('blink_me '+clss);
+      if(permanent!==true)setTimeout(function(){_$("#notification").html("").removeClass('blink_me');},5000);
    },
    deb:  function(){
       if(this.view){
@@ -502,6 +502,7 @@ function uRand(len,num,date,bin) {
 //============================================================================//
 function eternalCall(node,display){
    var eternal    = dynamis.get("eternal",true);
+   if(!eternal) return false;
    var curNode    = eternal[node];
    var curMensa   = curNode.mensa;
    var curDisplay = curNode[display];

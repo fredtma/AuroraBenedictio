@@ -33,6 +33,8 @@ $grey:   #777;
 //modify the action sheet
 .action-sheet-title {padding: 10px;color: #ececec;background:#000;font-size: 18px;padding-left: 100px;font-weight: bold; text-align: left;text-shadow: 2px 2px 5px #999;}
 .action-sheet-group{.button{text-align: left;padding-left:100px;}}
+//changes the add icon on the bar
+.item .list {margin-top:-7px;   .icon:before {font-size:30px;}}
 //============================================================================//
 //CUSTOMES CLASSES
 //============================================================================//
@@ -55,7 +57,7 @@ img.grey {
 .button.icon-modified:before{line-height: 30px;}
 
 //in the list of items the blockquote is modified
-.infoblock {position:absolute;right:0;top:0;font-size:0.8em;border-left: 5px solid $sky; }
+.infoblock {position:absolute;right:0;top:0;font-size:0.8em;border-left: 5px solid $sky; margin-top:4px; }
 .bar-sky .button.button-icon.icon:before{/* font-weight: bold; */color: navy;text-shadow: 2px 2px 2px #999;}
 
 //blinking class for animations

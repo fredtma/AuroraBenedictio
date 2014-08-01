@@ -1,6 +1,6 @@
 angular.module('AlphaOmega.services',['ngResource'])
    .service("online",["$resource","$http",online])
-   .service("helper",["$ionicPopup","$ionicActionSheet",helper])
+   .service("helper",["$ionicPopup","$ionicActionSheet","$state",helper])
    .service("crud",["online","helper","$stateParams","$log","$timeout",crud]);
 
 //############################################################################//
@@ -20,7 +20,7 @@ function online($resource,$http) {
       params   = params||{};
       checkConnection();//@todo: check connection mobile & desktop
       if (dynamis.get("SITE_CONFIG").isOnline && dynamis.get("SITE_CONFIG").Online) {
-         var service = $resource(dynamis.get("SITE_API")+view, params, {"militia": {"method": "POST", isArray: false, "cache": false, "responseType": "json", "withCredentials": true}});
+         var service = $resource(dynamis.get("SITE_API")+view, params, {"militia": {"method": "PUT", isArray: false, "cache": true, "responseType": "json", "withCredentials": true}});
          iyona.deb("SERVICE",service);
          return service;
       }else{
@@ -57,10 +57,11 @@ function online($resource,$http) {
 //############################################################################//
 //HELPER                                                                      //
 //############################################################################//
-function helper($ionicPopup,$ionicActionSheet){
+function helper($ionicPopup,$ionicActionSheet,$state){
    var curNode,$scope;
 
    this.set=function(scope,node,display){
+
       $scope   = scope;
       curNode  = eternalCall(node,display);
       //enable module that have been set in the Node setting
@@ -72,8 +73,8 @@ function helper($ionicPopup,$ionicActionSheet){
          }//end for array module
       }//end if module array
    };//end func set
-
    this.action=function(){
+
       var title,submitTxt,buttons,custModule;
       title = curNode.display.title;
 
@@ -91,27 +92,47 @@ function helper($ionicPopup,$ionicActionSheet){
          "buttonClicked":function(index){
             iyona.info("button clicked is",index);
             switch(index){
-               case 0: $scope.module.submit(); actionSheet(); break;//note submit is setup to update or create in the crud service.
+               case 0: $scope.module.submit(); break;//note submit is setup to update or create in the crud service.
                default://buttons has all the custome module & text, select the custome module via the index
                   custModule = buttons[index].module;
                   iyona.deb(custModule,buttons,$scope.module);
-                  if(typeof $scope.module[custModule]!=="undefined") $scope.module[custModule](); actionSheet();break;
-            }
+                  if(typeof $scope.module[custModule]!=="undefined") $scope.module[custModule]();
+                  else if(buttons[index].goto) $state.go(buttons[index].goto);
+                  break;
+            }actionSheet();
          },
          "cancel":function(){iyona.info("cancel button clicked ");},
          "destructiveButtonClicked":function(){$scope.module.delete(); actionSheet();}
       });
    };
-
    this.getPicture=function(e){
+
       if(typeof navigator.camera === "undefined") {iyona.err("Camera option not available.",navigator); return false;}
       navigator.camera.getPicture(
          function(img){iyona.info("Capturing image",Camera); e.target.src = "data:image/jpeg;base64,"+img; },
          function(err){$ionicPopup.alert({"title":"Image Capture","template":"Could not capture the image::"+err}).then(function(){iyona.info("The image was no image captured::"+err);}); },
          {"quality":100,"destinationType":Camera.DestinationType.DATA_URL,"correctOrientation":true});
    };
+   this.barscan=function(){if(typeof cordova === "undefined"){iyona.info("cordova not setup");return;}
 
+      cordova.plugins.barcodeScanner.scan(
+         function(result){iyona.deb("Result",result);
+            $ionicPopup.alert({"title":"Captured Content","template":"Result: "+result.text+"\n"+"Format: "+result.format+"\n"+"Candelled: "+result.cancelled});
+            $state.go('call.article/search/'+result.text+'/barcode');
+         },
+         function(err){$ionicPopup.alert("Scanning failed: "+err);}
+      );
+   };
+   this.addChild=function(set,newObj){
+      $scope.display[set]=false;
+      $scope.child.gerund[set].push(newObj);
+   };
+   this.reorderItem=function(item,from,to){
+
+      iyona.deb("Ordering",item,from,to);
+   };
    this.enumWalk=function(opt){
+
       var selected = $scope.father[opt].alpha? $scope.father[opt].alpha:0;
       selected++;
 
@@ -123,20 +144,23 @@ function helper($ionicPopup,$ionicActionSheet){
 //CRUD                                                                        //
 //############################################################################//
 function crud(online,helper,$stateParams,$log,$timeout){
-   var that=this,$db,$scope,curNode,curMensa,curDisplay,curTitle,nodeName,nodeDisplay,RECORD;
+   var that=this,$db,$scope,curNode,curMensa,curDisplay,curTitle,nodeName,nodeDisplay,RECORD,consuetudinem={};
 
    this.set=function(scope,node,display){
 
-      $scope      = scope;
+      $scope      = scope;//set the variable to the private var
       nodeName    = node;
       nodeDisplay = display;
-      curNode     = eternalCall(node,display);
+      curNode     = eternalCall(node,display);//retrieve the eternal scope
+      if(curNode===false) {iyona.err("The defaultScope was not found"); return false;}
       curMensa    = curNode.mensa;
       curDisplay  = curNode.display;
       curTitle    = curNode.title;
       $scope.module = typeof $scope.module!=="undefined"?$scope.module:{};
       //setup on $scope the module, service, father, child
-      angular.extend($scope,{"father":curDisplay.fields,"child":curDisplay.child,"service":{"title":curTitle}});
+      angular.extend($scope,{"father":curDisplay.fields,"child":curDisplay.child,"service":{"title":curTitle},"display":{} });
+      angular.extend(consuetudinem,{"child":curDisplay.child,"uProfile":nodeName,"uDisplay":nodeDisplay});
+
       helper.set(scope,node,display);//set the module on the $scope.module property
       $db = online.notitia({"view":"form","call":"benedictio","mensa":nodeName,"display":nodeDisplay});
 
@@ -147,7 +171,7 @@ function crud(online,helper,$stateParams,$log,$timeout){
       }
       if($stateParams.jesua==="list"){
          $stateParams.jesua = null;$scope.service.Tau = "sigma";
-         sigma();
+         sigmaList();
       }
       if($stateParams.jesua!==null && $stateParams.jesua!==""){
          $scope.service.jesua = $stateParams.jesua;$scope.service.Tau = "deLta";
@@ -158,6 +182,7 @@ function crud(online,helper,$stateParams,$log,$timeout){
    };//end function set
 
    function sigma(jesua){ if($db===false) return;
+
       RECORD = new $db.get({"jesua":jesua},function(server){
          if(online.verify(server)===false)return;
          var iota = server.notitia.iota[0];
@@ -170,36 +195,59 @@ function crud(online,helper,$stateParams,$log,$timeout){
             }
             else $scope.father[key]=iota[key];
          }
-         iyona.deb("Server sigma",server,$scope.father);
+         $scope.$broadcast("readyForm",server.notitia);iyona.deb("Selected record server and father",server,$scope.father);that.msg(server.notitia.msg,false,'balanced');
       });
-      iyona.deb("RECORD",RECORD);
+   }//end function sigma
+   function sigmaList(){ if($db===false) return;
+
+      RECORD = new $db.get(function(server){
+         if(online.verify(server)===false)return;
+         var iota = server.notitia.iota;
+         $scope.generations=server.notitia.iota;
+
+         $scope.$broadcast("readyList",server.notitia);iyona.deb("Selected record server and father",server.notitia,$scope);that.msg(server.notitia.msg,false,'balanced');
+      });
    }//end function sigma
    function alpha(){iyona.info("Creating a new record");
-      var consuetudinem;
+
       var basilia = setQuaerere(nodeName,$scope.father,$scope.service.Tau,consuetudinem);
       RECORD  = new $db();
       angular.extend(RECORD,basilia);
-      RECORD.$save();
-      iyona.deb(RECORD,basilia);
-      /*
-      $scope.$parent.msg      = (typeof $scope.$parent.msg !=="undefined")?$scope.$parent.msg:{};
-      iyona.deb("VALUES",$scope);
-      $scope.$parent.msg.text = "passed value";
-      $scope.$parent.msg.err  = false;
-      */
+      RECORD.$save(function(server){
+         if(online.verify(server)===false)return;
+         that.msg(server.notitia.msg,false,'balanced');
+      });
    }//end function alpha
    function delta(){iyona.info("Updating a record");
-      var consuetudinem;
+
       var basilia = setQuaerere(nodeName,$scope.father,$scope.service.Tau,consuetudinem);
-      RECORD.get({"jesua":$stateParams.jesua},function(server){
-         angular.extend(server,basilia);
-         server.$save();
-         iyona.deb(RECORD,basilia);
+      delete RECORD.notitia;
+      angular.extend(RECORD,basilia);
+
+      RECORD.$militia({"jesua":$stateParams.jesua},function(server){
+         if(online.verify(server)===false)return;
+         that.msg(server.notitia.msg,false,'balanced');
       });
-
-
-//      iyona.deb(RECORD,basilia);
-//      RECORD.$save(RECORD,function(server){iyona.deb("SAVED",server);});
    }//end function delta
-   function omega(){iyona.info("Deleting the record");}//end function omega
+   function omega(){iyona.info("Deleting the record");
+
+      var consuetudinem;
+      var basilia = setQuaerere(nodeName,$scope.father,"omegA",consuetudinem);
+      if(!$stateParams.jesua){iyona.msg("You need to add a new record first.",false,"assertive bold"); return false;}
+      angular.extend(RECORD,basilia);
+
+      RECORD.$delete({"jesua":$stateParams.jesua},function(server){
+         if(online.verify(server)===false)return;
+         that.msg(server.notitia.msg,false,'balanced');
+      });
+   }//end function omega
+
+   this.msg=function(msg,permanent,err){
+      if(!msg) return;
+      iyona.info(msg);
+      clss=clss!==false?"balanced":"assertive";
+      var clss=permanent!==true?clss+" blink_me":clss;
+      $scope.$parent.msg = {"text":msg,"err":err,"clss":clss};
+      if(permanent!==true)$timeout(function(){$scope.$parent.msg=false; },5000);
+   }
 }

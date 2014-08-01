@@ -61,6 +61,11 @@
   text-align: left;
   padding-left: 100px; }
 
+.item .list {
+  margin-top: -7px; }
+  .item .list .icon:before {
+    font-size: 30px; }
+
 img.grey {
   filter: gray;
   /* IE6-9 */
@@ -88,7 +93,8 @@ img.grey {
   right: 0;
   top: 0;
   font-size: 0.8em;
-  border-left: 5px solid #acd1e9; }
+  border-left: 5px solid #acd1e9;
+  margin-top: 4px; }
 
 .bar-sky .button.button-icon.icon:before {
   /* font-weight: bold; */
