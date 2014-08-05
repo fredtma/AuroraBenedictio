@@ -31,7 +31,7 @@ $grey:   #777;
    h3 {font-size:12px;}
 }
 //modify the action sheet
-.action-sheet-title {padding: 10px;color: #ececec;background:#000;font-size: 18px;padding-left: 100px;font-weight: bold; text-align: left;text-shadow: 2px 2px 5px #999;}
+.action-sheet-title {padding: 10px;background:#000;padding-left: 100px;font-weight: bold; text-align: left;text-shadow: 2px 2px 5px #999;color: #ececec;font-size: 18px;}
 .action-sheet-group{.button{text-align: left;padding-left:100px;}}
 //changes the add icon on the bar
 .item .list {margin-top:-7px;   .icon:before {font-size:30px;}}
@@ -59,6 +59,9 @@ img.grey {
 //in the list of items the blockquote is modified
 .infoblock {position:absolute;right:0;top:0;font-size:0.8em;border-left: 5px solid $sky; margin-top:4px; }
 .bar-sky .button.button-icon.icon:before{/* font-weight: bold; */color: navy;text-shadow: 2px 2px 2px #999;}
+
+//custome title with shaddow
+.myTitle{text-shadow: 1px 1px 5px #999;color: #ececec !important;font-size: 18px !important;}
 
 //blinking class for animations
 .blink_me {animation-name: blinker;animation-duration: 1s;animation-timing-function: linear;animation-iteration-count: infinite;-webkit-animation-name: blinker;-webkit-animation-duration: 1s;-webkit-animation-timing-function: linear;-webkit-animation-iteration-count: infinite;-moz-animation-name: blinker;-moz-animation-duration: 1s;-moz-animation-timing-function: linear;-moz-animation-iteration-count: infinite;}

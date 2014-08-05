@@ -1,5 +1,5 @@
 angular.module('AlphaOmega.controllers', [])
-.controller('AppCtrl',['$scope','$ionicPopup',AppCtrl])
+.controller('AppCtrl',['$scope','helper',AppCtrl])
 .controller('DashCtrl',['$scope','$ionicModal',DashCtrl])
 .controller('ProfileCtrl',['$scope','crud',ProfileCtrl])
 .controller('ProfileListCtrl',['$scope','crud',ProfileListCtrl])
@@ -14,7 +14,7 @@ angular.module('AlphaOmega.controllers', [])
  * the controller for the main application.
  * This is located as the top parent controller of the side menus
  */
-function AppCtrl($scope,$ionicPopup) {
+function AppCtrl($scope,helper) {
 
    $scope.articles = {};
    $scope.articles.data =[
@@ -29,23 +29,8 @@ function AppCtrl($scope,$ionicPopup) {
       {"name":"nineth item", "desc":"This is the nineth item", "src":"img/article/nineth.jpg"},
       {"name":"tenth item", "desc":"This is the tenth item", "src":"img/article/tenth.jpg"}
    ];
-   $scope.barscan=function(){if(typeof cordova === "undefined"){console.log("cordova not setup");return;}
-      cordova.plugins.barcodeScanner.scan(
-         function(result){console.info("Result",result);
-            $ionicPopup.alert({"title":"Captured Content","template":"Result: "+result.text+"\n"+"Format: "+result.format+"\n"+"Candelled: "+result.cancelled});
-         },
-         function(err){$ionicPopup.alert("Scanning failed: "+err);}
-      );
-   };
-   $scope.logoff=function(){
-      $ionicPopup.confirm({"title":"Exit Applicaiton","template":"Are you sure you want to exit?"})
-      .then(function(res){
-
-         if(res){ionic.Platform.exitApp();}
-         else {console.info("Not closing");}
-      });
-
-   };
+   $scope.barscan=helper.barscan;
+   $scope.logoff=helper.logoff;
 }
 //============================================================================//
 /**
@@ -70,7 +55,7 @@ function DashCtrl($scope,$ionicModal) {
 //============================================================================//
 function ProfileCtrl($scope,crud){
    crud.set($scope,'profile-list','details');
-iyona.deb("cope",$scope);
+
    $scope.module.alpha=function(callback){
       var name = $scope.service.name.split(" ");
       $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day
@@ -82,16 +67,14 @@ iyona.deb("cope",$scope);
       callback.call();//call the service function
    }
    $scope.$on("readyForm",function(data,notitia){
-      if(typeof notitia.iota!=="undefined") $scope.service.name = notitia.iota[0].firstname+' '+notitia.iota[0].lastname;
+      if(typeof notitia.iota!=="undefined") {
+         var dob = notitia.iota[0].dob;
+         dob = dob.split("-")||[];
+         if(dob.length>2){ $scope.service.year=dob[0];$scope.service.month=dob[1];$scope.service.day=dob[2];}
+         $scope.service.name = notitia.iota[0].firstname+' '+notitia.iota[0].lastname;
+      }
       else iyona.info("Could not set name",data,notitia);
    });
-   $scope.showMe=function(opt){
-      $scope.display[opt]=true;
-   };
-   $scope.setDate=function(type,set){
-      var target = set.target;
-      $scope.father.year = target.value;
-   };
 
 }
 //============================================================================//

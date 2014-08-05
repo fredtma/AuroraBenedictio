@@ -16,6 +16,7 @@ function online($resource,$http) {
    var isViewLoading={"width": "100%", "display": "block"};
 
    this.notitia=function(params){
+
       var view = ":call,:view,:jesua,:mensa,:display";
       params   = params||{};
       checkConnection();//@todo: check connection mobile & desktop
@@ -31,6 +32,7 @@ function online($resource,$http) {
    }//endufntion notitia
 
    this.verify=function(server){
+
       isViewLoading = {"display": "none"};
       if (server.notitia && (typeof server.notitia.sql !== "undefined" || typeof server.notitia.quaerre !== "undefined")) iyona.info("QUAERRE", server.notitia.sql || server.notitia.quaerre);
       if (server.notitia && server.notitia.idem !== 0) {//cookie
@@ -38,11 +40,14 @@ function online($resource,$http) {
          u.cons = server.notitia.idem;
          dynamis.set("USER_NAME", u, true)
       }//pour maitre un autre biscuit
-      if(typeof server.notitia !=="undefined" && typeof server.notitia.iota !=="undefined") return server; else {iyona.err('Online error',server);return false;}
+      if(typeof server.notitia !=="undefined" && typeof server.notitia.err !=="undefined") { iyona.err(server.notitia.err,server.notitia.msg); this.msg(server.notitia.msg); return false;}
+      else if(typeof server.notitia !=="undefined" && typeof server.notitia.iota !=="undefined") return server;
+      else {iyona.err('Online error',server);return false;}
    }//end verify
 
    this.responseType=this.responseType||"json";
    this.post=function(url,params,callback){
+
       if(dynamis.get("SITE_CONFIG").isOnline && dynamis.get("SITE_CONFIG").Online){iyona.msg("Your device is currently Offline.",true,"danger bold"); return false;}//@todo
       $http.post(url,params,{"responseType":this.responseType,"cache":true,"headers":{"Content-Type":"application/x-www-form-urlencoded"},"withCredentials":true})
       .success(function(server){isViewLoading = {"display":"none"};callback(server);})
@@ -52,6 +57,16 @@ function online($resource,$http) {
          if(data&&"err" in data)iyona.msg(data.err,true,"danger",true);
          iyona.deb(data,status,headers,config,config.url);
       });
+   }
+
+
+   this.msg=function(msg,permanent,err){//duplication of function from crud
+      if(!msg) return;
+      iyona.info(msg);
+      clss=clss!==false?"balanced":"assertive";
+      var clss=permanent!==true?clss+" blink_me":clss;
+      $scope.$parent.msg = {"text":msg,"err":err,"clss":clss};
+      if(permanent!==true)$timeout(function(){$scope.$parent.msg=false; },5000);
    }
 }
 //############################################################################//
@@ -97,13 +112,23 @@ function helper($ionicPopup,$ionicActionSheet,$state){
                   custModule = buttons[index].module;
                   iyona.deb(custModule,buttons,$scope.module);
                   if(typeof $scope.module[custModule]!=="undefined") $scope.module[custModule]();
-                  else if(buttons[index].goto) $state.go(buttons[index].goto);
+                  else if(typeof buttons[index].goto ==="string") $state.go(buttons[index].goto);
+                  else if(typeof buttons[index].goto ==="object") $state.go(buttons[index].goto.call,buttons[index].goto.params,{"reload":false});
                   break;
             }actionSheet();
          },
          "cancel":function(){iyona.info("cancel button clicked ");},
          "destructiveButtonClicked":function(){$scope.module.delete(); actionSheet();}
       });
+   };
+   this.logoff=function(){
+
+      $ionicPopup.confirm({"title":"Exit Applicaiton","template":"Are you sure you want to exit?"})
+      .then(function(res){
+         if(res){ionic.Platform.exitApp();}
+         else {console.info("Not closing");}
+      });
+
    };
    this.getPicture=function(e){
 
@@ -124,8 +149,13 @@ function helper($ionicPopup,$ionicActionSheet,$state){
       );
    };
    this.addChild=function(set,newObj){
+
       $scope.display[set]=false;
       $scope.child.gerund[set].push(newObj);
+   };
+
+   this.showMe=function(opt){
+      $scope.display[opt]=true;
    };
    this.reorderItem=function(item,from,to){
 
@@ -164,7 +194,7 @@ function crud(online,helper,$stateParams,$log,$timeout){
       helper.set(scope,node,display);//set the module on the $scope.module property
       $db = online.notitia({"view":"form","call":"benedictio","mensa":nodeName,"display":nodeDisplay});
 
-      $scope.module.delete = function(){ if(typeof $scope.module.omega==="function")$scope.module.omega(function(){omega()}); else omega();}
+      $scope.module.delete = function(rem,ndx){ rem = rem||$stateParams.jesua; if(typeof $scope.module.omega==="function")$scope.module.omega(function(){omega(rem,ndx)}); else omega(rem,ndx);}
       if($stateParams.jesua==="new" || $stateParams.jesua==="") {
          $stateParams.jesua = null;$scope.service.Tau = "Alpha";$scope.service.title = "New "+curTitle;
          $scope.module.submit = function(){ if(typeof $scope.module.alpha==="function")$scope.module.alpha(function(){alpha()}); else alpha();}
@@ -195,7 +225,7 @@ function crud(online,helper,$stateParams,$log,$timeout){
             }
             else $scope.father[key]=iota[key];
          }
-         $scope.$broadcast("readyForm",server.notitia);iyona.deb("Selected record server and father",server,$scope.father);that.msg(server.notitia.msg,false,'balanced');
+         $scope.$broadcast("readyForm",server.notitia);iyona.deb("Selected record server and father");that.msg(server.notitia.msg,false,'balanced');
       });
    }//end function sigma
    function sigmaList(){ if($db===false) return;
@@ -205,16 +235,19 @@ function crud(online,helper,$stateParams,$log,$timeout){
          var iota = server.notitia.iota;
          $scope.generations=server.notitia.iota;
 
-         $scope.$broadcast("readyList",server.notitia);iyona.deb("Selected record server and father",server.notitia,$scope);that.msg(server.notitia.msg,false,'balanced');
+         $scope.$broadcast("readyList",server.notitia);iyona.deb("Selected record server and father");that.msg(server.notitia.msg,false,'balanced');
       });
    }//end function sigma
    function alpha(){iyona.info("Creating a new record");
 
+      if(typeof $scope.father.created==="undefined") $scope.father.created = new Date().toISOString(); else if ($scope.father.created==="none") delete $scope.father.created;
       var basilia = setQuaerere(nodeName,$scope.father,$scope.service.Tau,consuetudinem);
       RECORD  = new $db();
       angular.extend(RECORD,basilia);
       RECORD.$save(function(server){
          if(online.verify(server)===false)return;
+         var notitia = server.notitia;
+         $scope.father.jesua.alpha = notitia.iota;
          that.msg(server.notitia.msg,false,'balanced');
       });
    }//end function alpha
@@ -226,22 +259,19 @@ function crud(online,helper,$stateParams,$log,$timeout){
 
       RECORD.$militia({"jesua":$stateParams.jesua},function(server){
          if(online.verify(server)===false)return;
-         that.msg(server.notitia.msg,false,'balanced');
+         var notitia = server.notitia;
+         that.msg(notitia.msg,false,'balanced');
       });
    }//end function delta
-   function omega(){iyona.info("Deleting the record");
+   function omega(jesua,index){iyona.info("Deleting the record",jesua);
 
-      var consuetudinem;
-      var basilia = setQuaerere(nodeName,$scope.father,"omegA",consuetudinem);
-      if(!$stateParams.jesua){iyona.msg("You need to add a new record first.",false,"assertive bold"); return false;}
-      angular.extend(RECORD,basilia);
-
-      RECORD.$delete({"jesua":$stateParams.jesua},function(server){
+      if(!jesua){iyona.msg("You need to add a new record first.",false,"assertive bold"); return false;}
+      RECORD.$delete({"jesua":jesua},function(server){iyona.deb("server server server",server);
          if(online.verify(server)===false)return;
+         if(index)$scope.generations.splice(index,1);
          that.msg(server.notitia.msg,false,'balanced');
       });
    }//end function omega
-
    this.msg=function(msg,permanent,err){
       if(!msg) return;
       iyona.info(msg);
