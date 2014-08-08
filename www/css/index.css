@@ -96,15 +96,13 @@ img.grey {
   border-left: 5px solid #acd1e9;
   margin-top: 4px; }
 
-.bar-sky .button.button-icon.icon:before {
-  /* font-weight: bold; */
-  color: navy;
-  text-shadow: 2px 2px 2px #999; }
-
 .myTitle {
   text-shadow: 1px 1px 5px #999;
   color: #ececec !important;
   font-size: 18px !important; }
+
+.icon-shadow::before {
+  text-shadow: 1px 0px 2px #999; }
 
 .blink_me {
   animation-name: blinker;

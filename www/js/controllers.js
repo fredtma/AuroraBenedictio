@@ -1,6 +1,6 @@
 angular.module('AlphaOmega.controllers', [])
 .controller('AppCtrl',['$scope','helper',AppCtrl])
-.controller('DashCtrl',['$scope','$ionicModal',DashCtrl])
+.controller('DashCtrl',['$scope','$ionicModal','online',DashCtrl])
 .controller('ProfileCtrl',['$scope','crud',ProfileCtrl])
 .controller('ProfileListCtrl',['$scope','crud',ProfileListCtrl])
 .controller('ArticleCtrl',['$scope','$log',ArticlesCtrl])
@@ -36,20 +36,43 @@ function AppCtrl($scope,helper) {
 /**
  * the controller for the Dashboard
  */
-function DashCtrl($scope,$ionicModal) {
-   $ionicModal.fromTemplateUrl('cera/login.html',{
-      "scope":$scope,
-      "animation":"slide-in-up"
-   }).then(function(modal){
+function DashCtrl($scope,$ionicModal,online) {
+   $ionicModal
+   .fromTemplateUrl('cera/login.html',{"scope":$scope,"animation":"slide-in-up","focusFirstInput":true,"backdropClickToClose":false,"hardwareBackButtonClose":false})
+   .then(function(modal){
       $scope.modal = modal;
-      $scope.modal.show();
+      if(!impetroUser().operarius||true) $scope.modal.show();
    });
+
    $scope.loginDisplay = function(){ $scope.modal.show();};
    $scope.loginHide = function(){ $scope.modal.hide();};
    $scope.loginValidation = function () {$scope.loginHide(); };
    $scope.$on('$destroy',function(){$scope.modal.remove();});
    $scope.$on('modal.hidden',function(){/*...*/});
    $scope.$on('modal.removed',function(){/*...*/});
+
+   angular.extend($scope,{"module":{},"service":{}});
+   $scope.service.attempt=0;
+   $scope.module.login  =function(){
+      var u,p;
+      u=$scope.data.username;p=md5($scope.father.password);//aliquis
+      if(!u || !p) {$scope.service.msg = "Please enter the username."; return false;}
+      online.post(service,{"u":u,"p":p},function(server){
+         var setting= new configuration(),row;
+         if(server.length){
+            row=server.rows[0];
+            var procurator=(row['level']==='super')?1:0,
+            USER_NAME={"operarius":row['username'],"licencia":row['aditum'],"nominis":row['name'],"jesua":row['jesua'],"procurator":procurator,"cons":row["sess"],"mail":row['email']};
+            dynamis.set("USER_NAME",USER_NAME);dynamis.set("USER_NAME",USER_NAME,true);
+            configuration.config();//when login in run setup of default setting
+            $scope.modal.remove();
+            //@todo:change login details.
+         }else{$scope.service.attempt++;msg='Failed login.Fill in your email address & click on forgot password';
+            iyona.msg(msg,false," danger bold");
+         }
+      });//fetch callback
+   };
+   $scope.module.forgot =function(){};
 
 }
 //============================================================================//

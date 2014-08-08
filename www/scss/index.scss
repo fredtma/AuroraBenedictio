@@ -58,10 +58,12 @@ img.grey {
 
 //in the list of items the blockquote is modified
 .infoblock {position:absolute;right:0;top:0;font-size:0.8em;border-left: 5px solid $sky; margin-top:4px; }
-.bar-sky .button.button-icon.icon:before{/* font-weight: bold; */color: navy;text-shadow: 2px 2px 2px #999;}
 
 //custome title with shaddow
 .myTitle{text-shadow: 1px 1px 5px #999;color: #ececec !important;font-size: 18px !important;}
+
+//add a shadow to icons.
+.icon-shadow::before{text-shadow: 1px 0px 2px #999;}
 
 //blinking class for animations
 .blink_me {animation-name: blinker;animation-duration: 1s;animation-timing-function: linear;animation-iteration-count: infinite;-webkit-animation-name: blinker;-webkit-animation-duration: 1s;-webkit-animation-timing-function: linear;-webkit-animation-iteration-count: infinite;-moz-animation-name: blinker;-moz-animation-duration: 1s;-moz-animation-timing-function: linear;-moz-animation-iteration-count: infinite;}

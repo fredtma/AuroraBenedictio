@@ -10,8 +10,8 @@
       <ion-list show-reorder="false" can-swipe="true"  >
          <ion-item ng-repeat="article in articles.data|filter:search"
                    href="#/call/article/{{article.name}}"
-                   class="item item-avatar item-text-wrap">
-            <img ng-src="{{article.src}}" /><h2 ng-bind="article.name"></h2><p ng-bind="article.desc" style="font-size:0.8em;"></p>
+                   class="item item-thumbnail-left item-text-wrap">
+            <img ng-src="{{article.src}}" /><h2 ng-bind="article.name"></h2><p ng-bind="article.desc" style="font-size:0.8em;color:#aaa;"></p>
             <blockquote class="infoblock">Location: Dimention Data<br/>Status: Repairing<br/>High Importance<br/></blockquote>
             <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(article, $fromIndex, $toIndex)"></ion-reorder-button>
             <ion-option-button class=""><a style="padding-top:15px;" class="button button-icon icon ion-close-circled assertive"></a> </ion-option-button>
