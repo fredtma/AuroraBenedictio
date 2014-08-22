@@ -15,12 +15,15 @@ angular.module('AlphaOmega.services',['ngResource'])
 function online($resource,$http) {
    var isViewLoading={"width": "100%", "display": "block"};
 
+   this.principio=function(){//kick start the storage system, used upon login or application start
+      //@todo://
+   }
    this.notitia=function(params){
 
       var view = ":call,:view,:jesua,:mensa,:display";
       params   = params||{};
       checkConnection();//@todo: check connection mobile & desktop
-      if (dynamis.get("SITE_CONFIG").isOnline && dynamis.get("SITE_CONFIG").Online) {
+      if (!dynamis.get("SITE_CONFIG").isOnline) {
          var service = $resource(dynamis.get("SITE_API")+view, params, {"militia": {"method": "PUT", isArray: false, "cache": true, "responseType": "json", "withCredentials": true}});
          iyona.deb("SERVICE",service);
          return service;
@@ -48,7 +51,7 @@ function online($resource,$http) {
    this.responseType=this.responseType||"json";
    this.post=function(url,params,callback){
 
-      if(dynamis.get("SITE_CONFIG").isOnline && dynamis.get("SITE_CONFIG").Online){iyona.msg("Your device is currently Offline.",true,"danger bold"); return false;}//@todo
+      if(!dynamis.get("SITE_CONFIG").isOnline){iyona.msg("Your device is currently Offline.",true,"danger bold"); return false;}//@todo
       $http.post(url,params,{"responseType":this.responseType,"cache":true,"headers":{"Content-Type":"application/x-www-form-urlencoded"},"withCredentials":true})
       .success(function(server){isViewLoading = {"display":"none"};callback(server);})
       .error(function(data,status,headers,config){isViewLoading = {"display":"none"};

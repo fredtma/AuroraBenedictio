@@ -47,6 +47,11 @@
   @include tab-style($tabs-light-bg, $tabs-light-border, $tabs-light-text);
   @include tab-badge-style($tabs-light-text, $tabs-light-bg);
 }
+.tabs-sky > .tabs,
+.tabs.tabs-sky {
+  @include tab-style($tabs-sky-bg, $tabs-sky-border, $tabs-sky-text);
+  @include tab-badge-style($tabs-sky-text, $tabs-sky-bg);
+}
 .tabs-stable > .tabs,
 .tabs.tabs-stable {
   @include tab-style($tabs-stable-bg, $tabs-stable-border, $tabs-stable-text);
@@ -111,6 +116,7 @@
   }
 
   @include tabs-striped('tabs-light', $light);
+  @include tabs-striped('tabs-sky', $sky);
   @include tabs-striped('tabs-stable', $stable);
   @include tabs-striped('tabs-positive', $positive);
   @include tabs-striped('tabs-calm', $calm);
@@ -226,7 +232,7 @@
 
 .tabs-icon-left > .tabs .tab-item .icon,
 .tabs-icon-left.tabs .tab-item .icon {
-  padding-right: 3px;
+  padding-right: 20px;
 }
 
 .tabs-icon-right > .tabs .tab-item .icon,
@@ -266,6 +272,9 @@
 
   &.tab-item-light {
     color: $light;
+  }
+  &.tab-item-sky {
+    color: $sky;
   }
   &.tab-item-stable {
     color: $stable;

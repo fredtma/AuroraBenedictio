@@ -11,14 +11,14 @@
          <div class="list ">
             <label class="item item-input item-floating-label">
                <span class="input-label">Username</span>
-               <input type="text" ng-model="loginData.username" placeholder="Enter your email or username" required autofocus autocomplete="email">
+               <input type="text" ng-model="father.username" placeholder="Enter your email or username" required autofocus autocomplete="email">
             </label>
             <label class="item item-input item-floating-label">
                <span class="input-label">Password</span>
-               <input type="password" ng-model="loginData.password" placeholder="Enter your password" required>
+               <input type="password" ng-model="father.password" placeholder="Enter your password" required>
             </label>
             <div class="item" style="text-align:center">
-               <button class="button button-outline button-balanced icon-left ion-log-in" style="width:30%" type="submit" type="submit">Log in</button>
+               <button class="button button-outline button-balanced icon-left ion-log-in" style="width:30%" type="submit">Log in</button>
                <button class="button button-outline button-calm icon-left ion-person-add" style="width:30%" ui-sref="call.register" >Register</button>
                <button class="button button-outline button-dark icon-left ion-sad" style="width:30%"  ng-click="module.forgot()">I forgot</button>
             </div>

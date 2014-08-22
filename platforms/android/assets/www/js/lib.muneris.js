@@ -38,7 +38,7 @@ configuration.prototype.config=function(){
    sessionStorage.SITE_DATE   = 'fullDate';
    sessionStorage.SITE_TIME   = 'mediumTime';
    sessionStorage.SITE_LOCA   = 'benedictio';
-   sessionStorage.SITE_URL    = 'http://demo.xpandit.co.za/aura/';
+   sessionStorage.SITE_URL    = 'https://demo.xpandit.co.za/aura/';
    sessionStorage.SITE_API    = sessionStorage.SITE_URL+i;
    sessionStorage.SITE_SERVICE= sessionStorage.SITE_URL+i+'services';
    sessionStorage.SITE_MILITIA= sessionStorage.SITE_URL+i+'notitia';
@@ -46,26 +46,31 @@ configuration.prototype.config=function(){
    sessionStorage.SITE_CONNECT= sessionStorage.SITE_URL+i+'is-connect';
    sessionStorage.SITE_ALIQUIS= sessionStorage.SITE_URL+i+'aliquis';
    sessionStorage.SITE_UPLOADS= sessionStorage.SITE_URL+'uploads/';
-   sessionStorage.MAIL_SUPPORT= 'support@gmail.co.za';
-   sessionStorage.DB_NAME     = 'app_benedictio';
+   sessionStorage.MAIL_SUPPORT= 'support@xpandit.co.za';
+   sessionStorage.DB_NAME     = 'app_xpandit';
    sessionStorage.DB_VERSION  = 1;//always use integer bcos of iDB
    sessionStorage.DB_DESC     = 'The local application Database';
    sessionStorage.DB_SIZE     = 15;
    sessionStorage.DB_LIMIT    = 20;
    conf = {
+      "Worker":         window.hasOwnProperty('Worker'),
+      "openDatabase":   "openDatabase" in window,
       "indexedDB":      "indexedDB" in window||"webkitIndexedDB" in window||"mozIndexedDB" in window||"msIndexedDB" in window,
-      "openDatabase":   typeof window.openDatabase!=="undefined",
-      "Worker":         typeof window.Worker!=="undefined",
-      "WebSocket":      typeof window.WebSocket!=="undefined",
-      "history":        typeof window.history!=="undefined",
+      "WebSocket":      window.hasOwnProperty('WebSocket'),
+      "history":        window.hasOwnProperty('history'),
       "formValidation": hasFormValidation(),
-      "jsValidation":   true,
+      "useWorker":      true,
+      "useIDB":         true,
+      "useWebSql":      false,
+      "useJSvalidation":true,
       "isOnline":       navigator.onLine,
+      "Online":         true,//used in online service
       "projectID":      "17238315752",
       "chromeApp":      (typeof chrome !== "undefined" && typeof chrome.app.window!=="undefined")
    };
    sessionStorage.SITE_CONFIG   = JSON.stringify(conf);
-   iyona.sync({"url":sessionStorage.SITE_URL+'json/caecus-benedictio.json',"method":"get","format":"json","callback":function(data){iyona.off("eternalScope::",data);
+   iyona.sync({"url":sessionStorage.SITE_URL+'json/caecus-benedictio.json',"method":"get","format":"json","callback":function(data){
+      iyona.off("eternalScope-",data);
       dynamis.set("eternal",data,true);
    }});
    dynamis.set("EXEMPLAR",{

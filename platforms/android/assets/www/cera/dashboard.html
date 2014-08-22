@@ -1,51 +1,63 @@
 <ion-view title="Dashboard">
    <ion-content class="has-header ">
-      <a class="card dash" href="#/call/articles">
-         <div class="item item-divider item-sky">Article</div>
-         <div class="item item-text-wrap item-image"><img src="img/dash2.jpg"/></div>
-         <div class="item item-icon-left sky"><i class="icon ion-ios7-pricetags"></i>Articles Station</div>
-      </a>
-      <a class="card dash" href="#/call/dsl">
-         <div class="item item-divider item-sky">ADSL Line</div>
-         <div class="item item-text-wrap item-image"><img src="img/dash1.jpg"/></div>
-         <div class="item item-icon-left sky"><i class="icon ion-network"></i>ADSL Lines</div>
-      </a>
-      <div class="list card dash" >
-         <div class="item item-avatar">
-            <img src="img/article/photo1.jpg">
-            <h2>Kgabu Mashiyaney</h2>
-            <p>Administrator</p>
-         </div>
-         <div class="item item-body">
-            <img class="full-image" src="img/article/laptop.jpg">
-            <p>
-               Jacop Zuma's laptop is currently at the supplier's. The client took the laptop in the shower in the hope of removing the virus
-            </p>
-            <p>
-               <a href="#" class="subdued">3 Status</a>
-               <a href="#" class="subdued">5 Urgency</a>
-            </p>
-         </div>
-         <div class="item tabs tabs-secondary tabs-icon-left" >
-            <a class="tab-item" href="#"><i class="icon ion-flag positive"></i>Status</a>
-            <a class="tab-item" href="#"><i class="icon ion-alert assertive"></i>Urgency</a>
-            <a class="tab-item" href="#"><i class="icon ion-share balanced"></i>Assign</a>
-         </div>
+      <div class="row">
+         <a class="card col dash" href="#/call/articles">
+
+            <div class="item item-text-wrap item-image">
+               <img src="img/dash2.jpg"/>
+               <div class="item item-divider item-sky dash-top">Article</div>
+               <div class="item item-icon-left sky  dash-bot"><i class="icon ion-ios7-pricetags"></i>Articles Station</div>
+            </div>
+
+         </a>
+         <a class="card col dash" href="#/call/dsl">
+            <div class="item item-text-wrap item-image">
+               <img src="img/dash1.jpg"/>
+               <div class="item item-divider item-sky dash-top">ADSL Line</div>
+               <div class="item item-icon-left sky  dash-bot"><i class="icon ion-network"></i>ADSL Lines</div>
+            </div>
+         </a>
       </div>
-      <div class="list card dash">
-         <a href="#" class="item item-icon-left text-grey"><i class="icon ion-document sky"></i>SABJ Reports</a>
-         <a href="#" class="item item-icon-left text-grey"><i class="icon ion-ios7-telephone sky"></i>Company phone number</a>
-         <a href="#" class="item item-icon-left text-grey"><i class="icon ion-email sky"></i>Send Notification</a>
-         <a href="#" class="item item-icon-left text-grey"><i class="icon ion-alert-circled sky"></i>Capture Error</a>
-      </div>
-      <div class="list card dash">
-         <a href="#/call/logviews" class="item item-divider text-grey">Latest Activity</a>
-         <a href="#" class="item text-grey">Samuel at Poswa</a>
-         <a href="#" class="item text-grey">Kea breaking Julius M's PC</a>
-         <a href="#" class="item text-grey">Steven in a meeting</a>
-         <a href="#" class="item text-grey">Althea sick</a>
-         <a href="#" class="item text-grey">Frederick simply awsome</a>
-         <a href="#" class="item text-grey">Building on fire</a>
+      <div class="row">
+         <div class="list card col dash" >
+            <div class="item item-avatar">
+               <img src="img/article/photo1.jpg">
+               <h2>Kgabu Mashiyaney</h2>
+               <p>Administrator</p>
+            </div>
+            <div class="item item-body">
+               <img class="full-image" src="img/article/laptop.jpg">
+               <p>
+                  Jacop Zuma's laptop is currently at the supplier's. The client took the laptop in the shower in the hope of removing the virus
+               </p>
+               <p>
+                  <a href="#" class="subdued">3 Status</a>
+                  <a href="#" class="subdued">5 Urgency</a>
+               </p>
+            </div>
+            <div class="item tabs tabs-secondary tabs-icon-left" >
+               <a class="tab-item" href="#"><i class="icon ion-flag positive"></i>Status</a>
+               <a class="tab-item" href="#"><i class="icon ion-alert assertive"></i>Urgency</a>
+               <a class="tab-item" href="#"><i class="icon ion-share balanced"></i>Assign</a>
+            </div>
+         </div>
+         <div class="col dash">
+            <div class="list">
+               <a href="#" class="item item-icon-left text-grey"><i class="icon ion-document sky"></i>SABJ Reports</a>
+               <a href="#" class="item item-icon-left text-grey"><i class="icon ion-ios7-telephone sky"></i>Company phone number</a>
+               <a href="#" class="item item-icon-left text-grey"><i class="icon ion-email sky"></i>Send Notification</a>
+               <a href="#" class="item item-icon-left text-grey"><i class="icon ion-alert-circled sky"></i>Capture Error</a>
+            </div>
+            <div class="list ">
+               <a href="#/call/logviews" class="item item-divider text-grey">Latest Activity</a>
+               <a href="#" class="item text-grey">Samuel at Poswa</a>
+               <a href="#" class="item text-grey">Kea breaking Julius M's PC</a>
+               <a href="#" class="item text-grey">Steven in a meeting</a>
+               <a href="#" class="item text-grey">Althea sick</a>
+               <a href="#" class="item text-grey">Frederick simply awsome</a>
+               <a href="#" class="item text-grey">Building on fire</a>
+            </div>
+         </div>
       </div>
    </ion-content>
 </ion-view>

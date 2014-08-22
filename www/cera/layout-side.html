@@ -14,10 +14,10 @@
    <ion-side-menu side="left">
       <header class="bar bar-sky bar-header">
          <div class="row user-avatar" ui-sref="call.profile">
-            <div class="col col-20"><img src="img/article/photo.jpg"/></div>
+            <div class="col col-20"><img ng-src="{{profile.avatar||'img/article/photo.jpg'}}"/></div>
             <div class="col col-80">
-               <h2 class="title-left">Frederick Tshimanga</h2>
-               <h3 class="title-left">Application Developer</h3>
+               <h2 class="title-left" ng-bind="profile.gevenname"></h2>
+               <h3 class="title-left" ng-bind="profile.position"></h3>
             </div>
          </div>
       </header>

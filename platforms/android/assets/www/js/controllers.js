@@ -1,9 +1,12 @@
 angular.module('AlphaOmega.controllers', [])
-.controller('DashCtrl',['$scope','$ionicModal',DashCtrl])
-.controller('ProfileCtrl',['$scope','$ionicActionSheet',ProfileCtrl])
-.controller('AppCtrl',['$scope','$ionicPopup',AppCtrl])
-.controller('ArticleCtrl',['$scope','$log',ArticleCtrl])
-.controller('ArticleDetailsCtrl',['$scope','$stateParams','$ionicActionSheet',ArticleDetailsCtrl])
+.controller('AppCtrl',['$scope','helper',AppCtrl])
+.controller('DashCtrl',['$scope','$ionicModal','online',DashCtrl])
+.controller('ProfileCtrl',['$scope','crud',ProfileCtrl])
+.controller('ProfileListCtrl',['$scope','crud',ProfileListCtrl])
+.controller('ArticleCtrl',['$scope','$log',ArticlesCtrl])
+.controller('ArticleDetailsCtrl',['$scope','$stateParams','$ionicActionSheet',function(){}])
+.controller('ArticleLogsCtrl',['$scope','crud',ArticleLogsCtrl])
+.controller('articleListLogsCtrl',['$scope','$ionicSlideBoxDelegate','crud',articleListLogsCtrl])
 .controller('logViewsCtrl',['$scope','$ionicSideMenuDelegate','$ionicLoading','$ionicPopup',logViewsCtrl]);
 
 //============================================================================//
@@ -11,7 +14,7 @@ angular.module('AlphaOmega.controllers', [])
  * the controller for the main application.
  * This is located as the top parent controller of the side menus
  */
-function AppCtrl($scope,$ionicPopup) {
+function AppCtrl($scope,helper) {
 
    $scope.articles = {};
    $scope.articles.data =[
@@ -26,108 +29,115 @@ function AppCtrl($scope,$ionicPopup) {
       {"name":"nineth item", "desc":"This is the nineth item", "src":"img/article/nineth.jpg"},
       {"name":"tenth item", "desc":"This is the tenth item", "src":"img/article/tenth.jpg"}
    ];
-   $scope.barscan=function(){if(typeof cordova === "undefined"){console.log("cordova not setup");return;}
-      cordova.plugins.barcodeScanner.scan(
-         function(result){console.info("Result",result);
-            $ionicPopup.alert({"title":"Captured Content","template":"Result: "+result.text+"\n"+"Format: "+result.format+"\n"+"Candelled: "+result.cancelled});
-         },
-         function(err){$ionicPopup.alert("Scanning failed: "+err);}
-      );
-   };
-   $scope.logoff=function(){
-      $ionicPopup.confirm({"title":"Exit Applicaiton","template":"Are you sure you want to exit?"})
-      .then(function(res){
-         console.log("Confirm result",res);
-         if(res){ionic.Platform.exitApp();}
-         else {console.info("Not closing");}
-      });
-
-   };
-}
-//============================================================================//
-function ProfileCtrl($scope,$ionicActionSheet){
-   angular.extend($scope,{"display":{}, "title":"Frederick Tshimanga's Profile","father":{"year":1985,"month":12,"day":12},"child":{"contact":[{"number":"","type":"mobile"}]}});
-
-   $scope.showMe=function(opt){
-      $scope.display[opt]=true;
-      console.log(opt,$scope.display);
-   };
-   $scope.addChild=function(set,type){
-      $scope.display[set]=false;
-      $scope.child[set].push({"number":"","type":type});
-   };
-   $scope.setDate=function(type,set){console.log(set);
-      var target = set.target;
-      $scope.father.year = target.value;
-   };
-
-   $scope.action=function(){
-      var actionSheet = $ionicActionSheet.show({
-         "titleText":"Take Action",
-         "buttons":[{"text":"Update Article"},{"text":"Scan Barcode"},{"text":"Capture Article"}],
-         "cancelText":"Cancel Action",
-         "destructiveText":"Delete Article",
-         "buttonClicked":function(index){console.info("button clicked is",index);},
-         "cancel":function(index){console.info("cancel button clicked is",index);},
-         "destructiveButtonClicked":function(index){console.info("destructiveButtonClicked clicked is",index); actionSheet();}
-      });
-   };
-
-   $scope.getPicture=function(e){
-      if(typeof navigator.camera === "undefined") {console.error("object not there ",navigator); return false;}
-      navigator.camera.getPicture(
-         function(img){console.info("Capturing image",Camera); e.target.src = "data:image/jpeg;base64,"+img; },
-         function(err){$ionicPopup.alert({"title":"Image Capture","template":"Could not capture the image::"+err}).then(function(){console.info("The image was not capture::"+err);}); },
-         {"quality":100,"destinationType":Camera.DestinationType.DATA_URL,"correctOrientation":true});
-   };
+   $scope.barscan=helper.barscan;
+   $scope.logoff=helper.logoff;
 }
 //============================================================================//
 /**
  * the controller for the Dashboard
  */
-function DashCtrl($scope,$ionicModal) {
-   $ionicModal.fromTemplateUrl('cera/login.html',{
-      "scope":$scope,
-      "animation":"slide-in-up"
-   }).then(function(modal){
+function DashCtrl($scope,$ionicModal,online) {
+   $ionicModal
+   .fromTemplateUrl('cera/login.html',{"scope":$scope,"animation":"slide-in-up","focusFirstInput":true,"backdropClickToClose":false,"hardwareBackButtonClose":false})
+   .then(function(modal){
       $scope.modal = modal;
-      $scope.modal.show();
+      if(!impetroUser().operarius||true) $scope.modal.show();
    });
+
    $scope.loginDisplay = function(){ $scope.modal.show();};
    $scope.loginHide = function(){ $scope.modal.hide();};
-   $scope.loginValidation = function () {$scope.loginHide(); console.log("Closing login details");};
+   $scope.loginValidation = function () {$scope.loginHide(); };
    $scope.$on('$destroy',function(){$scope.modal.remove();});
    $scope.$on('modal.hidden',function(){/*...*/});
    $scope.$on('modal.removed',function(){/*...*/});
 
+   angular.extend($scope,{"module":{},"service":{}});
+   $scope.service.attempt=0;
+   $scope.module.login  =function(){
+      var u,p;
+      u=$scope.data.username;p=md5($scope.father.password);//aliquis
+      if(!u || !p) {$scope.service.msg = "Please enter the username."; return false;}
+      online.post(service,{"u":u,"p":p},function(server){
+         var setting= new configuration(),row;
+         if(server.length){
+            row=server.rows[0];
+            var procurator=(row['level']==='super')?1:0,
+            USER_NAME={"operarius":row['username'],"licencia":row['aditum'],"nominis":row['name'],"jesua":row['jesua'],"procurator":procurator,"cons":row["sess"],"mail":row['email']};
+            dynamis.set("USER_NAME",USER_NAME);dynamis.set("USER_NAME",USER_NAME,true);
+            configuration.config();//when login in run setup of default setting
+            $scope.modal.remove();
+            //@todo:change login details.
+         }else{$scope.service.attempt++;msg='Failed login.Fill in your email address & click on forgot password';
+            iyona.msg(msg,false," danger bold");
+         }
+      });//fetch callback
+   };
+   $scope.module.forgot =function(){};
+
 }
+//============================================================================//
+function ProfileCtrl($scope,crud){
+   crud.set($scope,'profile-list','details');
+
+   $scope.module.alpha=function(callback){
+      var name = $scope.service.name.split(" ");
+      $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day
+      callback.call();//call the service function
+   }
+   $scope.module.delta=function(callback){
+      var name = $scope.service.name.split(" ");
+      $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day
+      callback.call();//call the service function
+   }
+   $scope.$on("readyForm",function(data,notitia){
+      if(typeof notitia.iota!=="undefined") {
+         var dob = notitia.iota[0].dob;
+         dob = dob.split("-")||[];
+         if(dob.length>2){ $scope.service.year=dob[0];$scope.service.month=dob[1];$scope.service.day=dob[2];}
+         $scope.service.name = notitia.iota[0].firstname+' '+notitia.iota[0].lastname;
+      }
+      else iyona.info("Could not set name",data,notitia);
+   });
+
+}
+//============================================================================//
+function ProfileListCtrl($scope,crud){crud.set($scope,'profile-list','list');}
 //============================================================================//
 /**
  * the controller for the article
  */
-function ArticleCtrl($scope,$log) {
+function ArticlesCtrl($scope,$log) {
 
-   $log.info('articles',$scope);
-   $scope.reorderItem=function(item,from,to){console.log("Order from",from,"to",to,"on item",item);};
+   $scope.reorderItem=function(item,from,to){};
+   $scope.itemSwipe=function(tmp){}
 }
 //============================================================================//
 /**
- * the controller for the article details
+ * the controller for the article logs
  */
-function ArticleDetailsCtrl($scope,$stateParams,$ionicActionSheet) {
-   var num,article,articles = $scope.articles.data;
-   for(num in  articles ){article=articles[num]; if (article.name===$stateParams.jesua){$scope.article = article;break;} }
+function ArticleLogsCtrl($scope,crud) {
+   crud.set($scope,'article-logs','details');
 
-   $scope.action=function(){
-      var actionSheet = $ionicActionSheet.show({
-         "buttons":[{"text":"Update Article"},{"text":"Scan Barcode"},{"text":"Capture Article"}],
-         "destructiveText":"Delete Article",
-         "titleText":"Take Action",
-         "cancelText":"Cancel Action",
-         "buttonClicked":function(index){console.info("button clicked is",index);},
-         "destructiveButtonClicked":function(index){console.info("destructiveButtonClicked clicked is",index); actionSheet();}
-      });
-   };
+   $scope.module.alpha=function(callback){
+      $scope.father.code = $scope.father.code||uRand(5,true,true,true);iyona.deb("ALPHA",$scope.father);
+      callback.call();//call the service function
+   }
+}
+//============================================================================//
+/**
+ * the controller for the article logs
+ */
+function articleListLogsCtrl($scope,$ionicSlideBoxDelegate,crud) {
+   crud.set($scope,'article-logs','details');
+   var num,article,articles = $scope.articles.data;
+
+   $scope.module.alpha=function(callback){
+      $scope.father.code = $scope.father.code||uRand(5,true,true,true);iyona.deb("ALPHA",$scope.father);
+      callback.call();//call the service function
+   }
+   $scope.$on("readyList",function(server){
+      $ionicSlideBoxDelegate.update();
+   });
 }
 //============================================================================//
 /**

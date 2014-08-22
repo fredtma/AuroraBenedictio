@@ -53,9 +53,9 @@ $padding-large-horizontal:        16px !default;
 $padding-small-vertical:          5px !default;
 $padding-small-horizontal:        10px !default;
 
-$border-radius-base:              4px !default;
-$border-radius-large:             6px !default;
-$border-radius-small:             3px !default;
+$border-radius-base:              0px !default;
+$border-radius-large:             1px !default;
+$border-radius-small:             0px !default;
 
 
 // Content
@@ -90,7 +90,7 @@ $button-small-icon-size:          16px !default;
 
 $button-bar-button-font-size:     13px !default;
 $button-bar-button-height:        32px !default;
-$button-bar-button-padding:       8px !default;
+$button-bar-button-padding:       12px !default;
 $button-bar-button-icon-size:     20px !default;
 
 $button-light-bg:                 $light !default;
@@ -175,6 +175,12 @@ $bar-light-border:                $button-light-border !default;
 $bar-light-active-bg:             $button-light-active-bg !default;
 $bar-light-active-border:         $button-light-active-border !default;
 
+$bar-sky-bg:                    rgba($button-sky-bg, $bar-transparency) !default;
+$bar-sky-text:                  $button-sky-text !default;
+$bar-sky-border:                $button-sky-border !default;
+$bar-sky-active-bg:             $button-sky-active-bg !default;
+$bar-sky-active-border:         $button-sky-active-border !default;
+
 $bar-stable-bg:                   rgba($button-stable-bg, $bar-transparency) !default;
 $bar-stable-text:                 $button-stable-text !default;
 $bar-stable-border:               $button-stable-border !default;
@@ -244,6 +250,10 @@ $tabs-text-font-size:             14px !default;
 $tabs-light-bg:                   $button-light-bg !default;
 $tabs-light-border:               $button-light-border !default;
 $tabs-light-text:                 $button-light-text !default;
+
+$tabs-sky-bg:                   $button-sky-bg !default;
+$tabs-sky-border:               $button-sky-border !default;
+$tabs-sky-text:                 $button-sky-text !default;
 
 $tabs-stable-bg:                  $button-stable-bg !default;
 $tabs-stable-border:              $button-stable-border !default;
@@ -634,6 +644,9 @@ $badge-border-radius:             10px !default;
 
 $badge-light-bg:                  $button-light-bg !default;
 $badge-light-text:                $button-light-text !default;
+
+$badge-sky-bg:                  $button-sky-bg !default;
+$badge-sky-text:                $button-sky-text !default;
 
 $badge-stable-bg:                 $button-stable-bg !default;
 $badge-stable-text:               $button-stable-text !default;

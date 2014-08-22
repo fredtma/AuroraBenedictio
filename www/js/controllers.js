@@ -31,12 +31,14 @@ function AppCtrl($scope,helper) {
    ];
    $scope.barscan=helper.barscan;
    $scope.logoff=helper.logoff;
+   $scope.profile = {"givenname":null,"position":null,"avatar":"img/default.jpg"};
 }
 //============================================================================//
 /**
  * the controller for the Dashboard
  */
 function DashCtrl($scope,$ionicModal,online) {
+   $scope.father = {};
    $ionicModal
    .fromTemplateUrl('cera/login.html',{"scope":$scope,"animation":"slide-in-up","focusFirstInput":true,"backdropClickToClose":false,"hardwareBackButtonClose":false})
    .then(function(modal){
@@ -54,18 +56,21 @@ function DashCtrl($scope,$ionicModal,online) {
    angular.extend($scope,{"module":{},"service":{}});
    $scope.service.attempt=0;
    $scope.module.login  =function(){
-      var u,p;
-      u=$scope.data.username;p=md5($scope.father.password);//aliquis
+      var u,p,setting= new configuration();
+      //if(false){varUSER_NAME = {"operarius":"fredtma","licencia":{"Alpha":true,"deLta":true,"omegA":true,"lego":true},"nominis":"Frederick Tshimanga","jesua":"d27974ca95fd620ac92cf95bf8c1d1f2","procurator":1,"cons":"rpa741cbbu8c53ekcnmi1m6p13"};dynamis.set("USER_NAME",USER_NAME);dynamis.set("USER_NAME",USER_NAME,true);setting.config();$scope.modal.remove();return;}
+      u=$scope.father.username;p=md5($scope.father.password);//aliquis
       if(!u || !p) {$scope.service.msg = "Please enter the username."; return false;}
-      online.post(service,{"u":u,"p":p},function(server){
-         var setting= new configuration(),row;
+      online.post(sessionStorage.SITE_ALIQUIS,{"u":u,"p":p},function(server){
+         var row;
          if(server.length){
             row=server.rows[0];
             var procurator=(row['level']==='super')?1:0,
             USER_NAME={"operarius":row['username'],"licencia":row['aditum'],"nominis":row['name'],"jesua":row['jesua'],"procurator":procurator,"cons":row["sess"],"mail":row['email']};
-            dynamis.set("USER_NAME",USER_NAME);dynamis.set("USER_NAME",USER_NAME,true);
-            configuration.config();//when login in run setup of default setting
+            dynamis.set("USER_NAME",USER_NAME);dynamis.set("USER_NAME",USER_NAME,true);//todo:add the remember me option
+            setting.config();//when login in run setup of default setting
+            online.principio();//start and set local db
             $scope.modal.remove();
+            $scope.$parent.profile = {"givenname":row['name'],"position":rwo['email'],"avatar":"img/default.jpg"};
             //@todo:change login details.
          }else{$scope.service.attempt++;msg='Failed login.Fill in your email address & click on forgot password';
             iyona.msg(msg,false," danger bold");
