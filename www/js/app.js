@@ -4,11 +4,10 @@ if(typeof Build!=="undefined" && typeof WebView!=="undefined" && Build.VERSION.S
 }
 angular.module('AlphaOmega', ['ionic', 'AlphaOmega.controllers', 'AlphaOmega.services'])
 .config(["$stateProvider","$urlRouterProvider","$httpProvider",config])
-.run(["$ionicPlatform","$state",run]);
+.run(["$ionicPlatform","$location",run]);
 
 function config($stateProvider,$urlRouterProvider,$httpProvider) {
    $httpProvider.defaults.withCredentials = true;
-   iyona.deb("config");
    $stateProvider
       .state('call', {url: "/call",abstract: true,templateUrl: "cera/layout-side.html",controller: 'AppCtrl'})
       .state('call.dash', {url: "/dash",views: {'principle': {templateUrl: 'cera/dashboard.html',controller: 'DashCtrl'}}/**/})
@@ -25,9 +24,10 @@ function config($stateProvider,$urlRouterProvider,$httpProvider) {
 
 }
 
-function run($ionicPlatform,$state) {
+function run($ionicPlatform,$location) {
+
    ionic.Platform.isFullScreen = true;//also set the config.xml to fullscreen
-   if(!impetroUser().operarius) {$state.go("/call/dash");}/*less intensive redirect when not login*/
+   if(!impetroUser().operarius) {$location.path("/dash");}//less intensive redirect when not login
 
    $ionicPlatform.ready(function() {
       //@todo: set the phone grade and details captured.

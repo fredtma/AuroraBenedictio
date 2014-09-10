@@ -83,7 +83,7 @@ function DashCtrl($scope,$ionicModal,online) {
 //============================================================================//
 function ProfileCtrl($scope,crud){
    crud.set($scope,'profile-list','details');
-
+$scope.submit=function(frm){iyona.on("form",frm); return false;}
    $scope.module.alpha=function(callback){
       var name = $scope.service.name.split(" ");
       $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day
@@ -124,7 +124,7 @@ function ArticleLogsCtrl($scope,crud) {
    crud.set($scope,'article-logs','details');
 
    $scope.module.alpha=function(callback){
-      $scope.father.code = $scope.father.code||uRand(5,true,true,true);iyona.deb("ALPHA",$scope.father);
+      $scope.father.code = $scope.father.code||uRand(5,true,true,true);iyona.on("ALPHA",$scope.father);
       callback.call();//call the service function
    }
 }
@@ -137,7 +137,7 @@ function articleListLogsCtrl($scope,$ionicSlideBoxDelegate,crud) {
    var num,article,articles = $scope.articles.data;
 
    $scope.module.alpha=function(callback){
-      $scope.father.code = $scope.father.code||uRand(5,true,true,true);iyona.deb("ALPHA",$scope.father);
+      $scope.father.code = $scope.father.code||uRand(5,true,true,true);iyona.on("ALPHA",$scope.father);
       callback.call();//call the service function
    }
    $scope.$on("readyList",function(server){

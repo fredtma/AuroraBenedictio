@@ -18,22 +18,23 @@ function online($resource,$http) {
    this.principio=function(){//kick start the storage system, used upon login or application start
       //@todo://
    }
+   //setup the API
    this.notitia=function(params){
 
       var view = ":call,:view,:jesua,:mensa,:display";
       params   = params||{};
-      checkConnection();//@todo: check connection mobile & desktop
-      if (!dynamis.get("SITE_CONFIG").isOnline) {
+      //@todo: check connection mobile & desktop
+      if (checkConnection()) {
          var service = $resource(dynamis.get("SITE_API")+view, params, {"militia": {"method": "PUT", isArray: false, "cache": true, "responseType": "json", "withCredentials": true}});
-         iyona.deb("SERVICE",service);
+         iyona.on("SERVICE",service);
          return service;
       }else{
-         iyona.msg("You are currently offline", true, "danger bold");
+         this.msg("You are currently offline", true, "danger bold");
          isViewLoading = {"display": "none"};
          return false;
       }
    }//endufntion notitia
-
+   //general function used to verify the server received data.
    this.verify=function(server){
 
       isViewLoading = {"display": "none"};
@@ -47,34 +48,33 @@ function online($resource,$http) {
       else if(typeof server.notitia !=="undefined" && typeof server.notitia.iota !=="undefined") return server;
       else {iyona.err('Online error',server);return false;}
    }//end verify
-
+   //async calls
    this.responseType=this.responseType||"json";
    this.post=function(url,params,callback){
 
-      if(!dynamis.get("SITE_CONFIG").isOnline){iyona.msg("Your device is currently Offline.",true,"danger bold"); return false;}//@todo
+      if(!checkConnection()){this.msg("Your device is currently Offline.",true,"danger bold"); return false;}//@todo
       $http.post(url,params,{"responseType":this.responseType,"cache":true,"headers":{"Content-Type":"application/x-www-form-urlencoded"},"withCredentials":true})
       .success(function(server){isViewLoading = {"display":"none"};callback(server);})
       .error(function(data,status,headers,config){isViewLoading = {"display":"none"};
-         iyona.msg("Please check your internet connection::"+navigator.connection.type,true,'danger bold');
-         iyona.info("There was an error in handling the transaction.");
-         if(data&&"err" in data)iyona.msg(data.err,true,"danger",true);
-         iyona.deb(data,status,headers,config,config.url);
+
+         this.msg("There was an error in handling the transaction",true,'danger bold');
+         if(data&&"err" in data)this.msg(data.err,true,"danger",true);
+         iyona.on(data,status,headers,config,config.url);
       });
    }
-
-
    this.msg=function(msg,permanent,err){//duplication of function from crud
       if(!msg) return;
       iyona.info(msg);
       clss=clss!==false?"balanced":"assertive";
-      var clss=permanent!==true?clss+" blink_me":clss;
-      $scope.$parent.msg = {"text":msg,"err":err,"clss":clss};
+      var clss=permanent!==true?clss+" blink_me":clss,$scopeLayout=_$("#notification").scope();
+      $scopeLayout.msg = {"text":msg,"err":err,"clss":clss};
       if(permanent!==true)$timeout(function(){$scope.$parent.msg=false; },5000);
    }
 }
 //############################################################################//
 //HELPER                                                                      //
 //############################################################################//
+//the helper is there to set the name of method that will be used by the $scope
 function helper($ionicPopup,$ionicActionSheet,$state){
    var curNode,$scope;
 
@@ -96,8 +96,8 @@ function helper($ionicPopup,$ionicActionSheet,$state){
       var title,submitTxt,buttons,custModule;
       title = curNode.display.title;
 
-      if(!$scope.service.jesua) submitTxt = "<i class='icon ion-ios7-paper-outline' i> Create "+title;
-      else submitTxt = "<i class='icon ion-ios7-compose-outline' i> Update "+title;
+      if(!$scope.service.jesua) submitTxt = "<i class='icon ion-ios7-paper-outline' i></i> Create "+title;
+      else submitTxt = "<i class='icon ion-ios7-compose-outline' i></i> Update "+title;
       //create default submit and add custom action modules, this includes text & module to be called.
       buttons = [{"text":submitTxt}];
       if(curNode.display.action instanceof Array){buttons = buttons.concat(curNode.display.action);}
@@ -110,10 +110,13 @@ function helper($ionicPopup,$ionicActionSheet,$state){
          "buttonClicked":function(index){
             iyona.info("button clicked is",index);
             switch(index){
-               case 0: $scope.module.submit(); break;//note submit is setup to update or create in the crud service.
+               case 0:
+                  _$("#dataForm")[0].submit();
+                  //$scope.module.submit();
+                  break;//note submit is setup to update or create in the crud service.
                default://buttons has all the custome module & text, select the custome module via the index
                   custModule = buttons[index].module;
-                  iyona.deb(custModule,buttons,$scope.module);
+                  iyona.on(custModule,buttons,$scope.module);
                   if(typeof $scope.module[custModule]!=="undefined") $scope.module[custModule]();
                   else if(typeof buttons[index].goto ==="string") $state.go(buttons[index].goto);
                   else if(typeof buttons[index].goto ==="object") $state.go(buttons[index].goto.call,buttons[index].goto.params,{"reload":false});
@@ -141,12 +144,13 @@ function helper($ionicPopup,$ionicActionSheet,$state){
          function(err){$ionicPopup.alert({"title":"Image Capture","template":"Could not capture the image::"+err}).then(function(){iyona.info("The image was no image captured::"+err);}); },
          {"quality":100,"destinationType":Camera.DestinationType.DATA_URL,"correctOrientation":true});
    };
-   this.barscan=function(){if(typeof cordova === "undefined"){iyona.info("cordova not setup");return;}
+   this.barscan=function(){
+      if(typeof cordova === "undefined"){iyona.info("cordova not setup");return;}
 
       cordova.plugins.barcodeScanner.scan(
-         function(result){iyona.deb("Result",result);
+         function(result){iyona.on("Result",result);
             $ionicPopup.alert({"title":"Captured Content","template":"Result: "+result.text+"\n"+"Format: "+result.format+"\n"+"Candelled: "+result.cancelled});
-            $state.go('call.article/search/'+result.text+'/barcode');
+            $state.go('call.article',{"jesua":"search","field":result.text,"search":"barcode"});
          },
          function(err){$ionicPopup.alert("Scanning failed: "+err);}
       );
@@ -156,13 +160,12 @@ function helper($ionicPopup,$ionicActionSheet,$state){
       $scope.display[set]=false;
       $scope.child.gerund[set].push(newObj);
    };
-
    this.showMe=function(opt){
       $scope.display[opt]=true;
    };
    this.reorderItem=function(item,from,to){
 
-      iyona.deb("Ordering",item,from,to);
+      iyona.on("Ordering",item,from,to);
    };
    this.enumWalk=function(opt){
 
@@ -179,7 +182,7 @@ function helper($ionicPopup,$ionicActionSheet,$state){
 function crud(online,helper,$stateParams,$log,$timeout){
    var that=this,$db,$scope,curNode,curMensa,curDisplay,curTitle,nodeName,nodeDisplay,RECORD,consuetudinem={};
 
-   this.set=function(scope,node,display){
+   this.set=function(scope,node,display){iyona.on('scope',scope);
 
       $scope      = scope;//set the variable to the private var
       nodeName    = node;
@@ -189,7 +192,7 @@ function crud(online,helper,$stateParams,$log,$timeout){
       curMensa    = curNode.mensa;
       curDisplay  = curNode.display;
       curTitle    = curNode.title;
-      $scope.module = typeof $scope.module!=="undefined"?$scope.module:{};
+      $scope.module = isset($scope.module)?$scope.module:{};
       //setup on $scope the module, service, father, child
       angular.extend($scope,{"father":curDisplay.fields,"child":curDisplay.child,"service":{"title":curTitle},"display":{} });
       angular.extend(consuetudinem,{"child":curDisplay.child,"uProfile":nodeName,"uDisplay":nodeDisplay});
@@ -199,8 +202,10 @@ function crud(online,helper,$stateParams,$log,$timeout){
 
       $scope.module.delete = function(rem,ndx){ rem = rem||$stateParams.jesua; if(typeof $scope.module.omega==="function")$scope.module.omega(function(){omega(rem,ndx)}); else omega(rem,ndx);}
       if($stateParams.jesua==="new" || $stateParams.jesua==="") {
-         $stateParams.jesua = null;$scope.service.Tau = "Alpha";$scope.service.title = "New "+curTitle;
-         $scope.module.submit = function(){ if(typeof $scope.module.alpha==="function")$scope.module.alpha(function(){alpha()}); else alpha();}
+         $stateParams.jesua = null;
+         $scope.service.Tau = "Alpha";
+         $scope.service.title = "New "+curTitle;
+         $scope.module.submit = function(form){iyona.on("message",form); if(typeof $scope.module.alpha==="function")$scope.module.alpha(function(){alpha(form)}); else alpha(form);}
       }
       if($stateParams.jesua==="list"){
          $stateParams.jesua = null;$scope.service.Tau = "sigma";
@@ -228,7 +233,7 @@ function crud(online,helper,$stateParams,$log,$timeout){
             }
             else $scope.father[key]=iota[key];
          }
-         $scope.$broadcast("readyForm",server.notitia);iyona.deb("Selected record server and father");that.msg(server.notitia.msg,false,'balanced');
+         $scope.$broadcast("readyForm",server.notitia);iyona.on("Selected record server and father");that.msg(server.notitia.msg,false,'balanced');
       });
    }//end function sigma
    function sigmaList(){ if($db===false) return;
@@ -238,11 +243,12 @@ function crud(online,helper,$stateParams,$log,$timeout){
          var iota = server.notitia.iota;
          $scope.generations=server.notitia.iota;
 
-         $scope.$broadcast("readyList",server.notitia);iyona.deb("Selected record server and father");that.msg(server.notitia.msg,false,'balanced');
+         $scope.$broadcast("readyList",server.notitia);iyona.on("Selected record server and father");that.msg(server.notitia.msg,false,'balanced');
       });
    }//end function sigma
-   function alpha(){iyona.info("Creating a new record");
+   function alpha(form){iyona.info("Creating a new record");
 
+      if(validateForm()===false)return false;
       if(typeof $scope.father.created==="undefined") $scope.father.created = new Date().toISOString(); else if ($scope.father.created==="none") delete $scope.father.created;
       var basilia = setQuaerere(nodeName,$scope.father,$scope.service.Tau,consuetudinem);
       RECORD  = new $db();
@@ -269,12 +275,16 @@ function crud(online,helper,$stateParams,$log,$timeout){
    function omega(jesua,index){iyona.info("Deleting the record",jesua);
 
       if(!jesua){iyona.msg("You need to add a new record first.",false,"assertive bold"); return false;}
-      RECORD.$delete({"jesua":jesua},function(server){iyona.deb("server server server",server);
+      RECORD.$delete({"jesua":jesua},function(server){iyona.on("server server server",server);
          if(online.verify(server)===false)return;
          if(index)$scope.generations.splice(index,1);
          that.msg(server.notitia.msg,false,'balanced');
       });
    }//end function omega
+   function validateForm(form){
+      iyona.on("Validation",form,form.$valid);
+      return false;
+   }
    this.msg=function(msg,permanent,err){
       if(!msg) return;
       iyona.info(msg);
