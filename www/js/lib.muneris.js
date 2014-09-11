@@ -375,7 +375,8 @@ function checkConnection() {
    states[Connect.CELL_3G] = 'a Cell 3G connection';
    states[Connect.CELL_4G] = 'a Cell 4G connection';
    states[Connect.NONE] = 'with No network connection';
-   iyona.info('Connection type is ' + states[networkState],networkState);
+   var tmp = states[networkState]||networkState;
+   iyona.info('Connection type is ' + tmp,networkState);
    return networkState;
 
 }

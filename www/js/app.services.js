@@ -26,7 +26,6 @@ function online($resource,$http) {
       //@todo: check connection mobile & desktop
       if (checkConnection()) {
          var service = $resource(dynamis.get("SITE_API")+view, params, {"militia": {"method": "PUT", isArray: false, "cache": true, "responseType": "json", "withCredentials": true}});
-         iyona.on("SERVICE",service);
          return service;
       }else{
          this.msg("You are currently offline", true, "danger bold");
@@ -91,6 +90,7 @@ function helper($ionicPopup,$ionicActionSheet,$state){
          }//end for array module
       }//end if module array
    };//end func set
+   this.initForm=function(form){iyona.off("initForm",form); $scope.formScope = form; }
    this.action=function(){
 
       var title,submitTxt,buttons,custModule;
@@ -99,7 +99,7 @@ function helper($ionicPopup,$ionicActionSheet,$state){
       if(!$scope.service.jesua) submitTxt = "<i class='icon ion-ios7-paper-outline' i></i> Create "+title;
       else submitTxt = "<i class='icon ion-ios7-compose-outline' i></i> Update "+title;
       //create default submit and add custom action modules, this includes text & module to be called.
-      buttons = [{"text":submitTxt}];
+      buttons = [{"text":submitTxt,"type":"submit"}];
       if(curNode.display.action instanceof Array){buttons = buttons.concat(curNode.display.action);}
 
       var actionSheet = $ionicActionSheet.show({
@@ -111,8 +111,8 @@ function helper($ionicPopup,$ionicActionSheet,$state){
             iyona.info("button clicked is",index);
             switch(index){
                case 0:
-                  _$("#dataForm")[0].submit();
-                  //$scope.module.submit();
+                  //_$("#dataForm")[0].submit();
+                  $scope.module.submit(dataForm);
                   break;//note submit is setup to update or create in the crud service.
                default://buttons has all the custome module & text, select the custome module via the index
                   custModule = buttons[index].module;
@@ -182,7 +182,7 @@ function helper($ionicPopup,$ionicActionSheet,$state){
 function crud(online,helper,$stateParams,$log,$timeout){
    var that=this,$db,$scope,curNode,curMensa,curDisplay,curTitle,nodeName,nodeDisplay,RECORD,consuetudinem={};
 
-   this.set=function(scope,node,display){iyona.on('scope',scope);
+   this.set=function(scope,node,display){
 
       $scope      = scope;//set the variable to the private var
       nodeName    = node;
@@ -205,7 +205,7 @@ function crud(online,helper,$stateParams,$log,$timeout){
          $stateParams.jesua = null;
          $scope.service.Tau = "Alpha";
          $scope.service.title = "New "+curTitle;
-         $scope.module.submit = function(form){iyona.on("message",form); if(typeof $scope.module.alpha==="function")$scope.module.alpha(function(){alpha(form)}); else alpha(form);}
+         $scope.module.submit = function(){if(typeof $scope.module.alpha==="function")$scope.module.alpha(function(){alpha()}); else alpha();}
       }
       if($stateParams.jesua==="list"){
          $stateParams.jesua = null;$scope.service.Tau = "sigma";
@@ -246,7 +246,7 @@ function crud(online,helper,$stateParams,$log,$timeout){
          $scope.$broadcast("readyList",server.notitia);iyona.on("Selected record server and father");that.msg(server.notitia.msg,false,'balanced');
       });
    }//end function sigma
-   function alpha(form){iyona.info("Creating a new record");
+   function alpha(){iyona.info("Creating a new record");
 
       if(validateForm()===false)return false;
       if(typeof $scope.father.created==="undefined") $scope.father.created = new Date().toISOString(); else if ($scope.father.created==="none") delete $scope.father.created;
@@ -281,16 +281,21 @@ function crud(online,helper,$stateParams,$log,$timeout){
          that.msg(server.notitia.msg,false,'balanced');
       });
    }//end function omega
-   function validateForm(form){
-      iyona.on("Validation",form,form.$valid);
+   function validateForm(){
+      var form = $scope.formScope,dataForm=form.dataForm;
+      if(dataForm.$dirty && dataForm.$valid) return true;
+
+      $scope.service.isValide = 'isNotValide';
+      that.msg("The form is not valid, verify that all field are correct.",true,false);
+      iyona.on("Validation",form,dataForm,typeof dataForm);
       return false;
    }
-   this.msg=function(msg,permanent,err){
+   this.msg=function(msg,permanent,clss){
       if(!msg) return;
       iyona.info(msg);
-      clss=clss!==false?"balanced":"assertive";
+      clss=!isset(clss)? "balanced": (clss===false||clss===0)?"assertive":clss;
       var clss=permanent!==true?clss+" blink_me":clss;
-      $scope.$parent.msg = {"text":msg,"err":err,"clss":clss};
+      $scope.$parent.msg = {"text":msg,"clss":clss};
       if(permanent!==true)$timeout(function(){$scope.$parent.msg=false; },5000);
    }
 }

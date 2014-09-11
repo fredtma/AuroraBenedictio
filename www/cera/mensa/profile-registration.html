@@ -1,15 +1,20 @@
 <ion-view title="{{service.title}}">
-   <ion-content has-header="true" has-bouncing="false" padding="true">
-      <form name="dataForm" id="dataForm" ng-submit="submit(dataForm)" novalidate>
+   <ion-content has-header="true" has-bouncing="false" scroll="true" padding="true">
+      <form name="dataForm" id="dataForm" novalidate ng-init="module.initForm(this)" ng-class="service.isValide"  ng-model-options="{ updateOn: 'blur' }">
          <div class="list list-inset">
             <div class="item item-icon-left item-divider"><i class="icon ion-ios7-photos-outline"></i>Profile Image</div>
             <a class="item item-avatar">
                <img src="img/default.jpg"  ng-click="module.getPicture($event)" /><h2>Avatar</h2><p>Tap image to edit</p>
             </a>
             <div class="item item-icon-left item-divider"><i class="icon ion-ios7-person-outline"></i>Profile Details</div>
-            <label class="item item-input item-floating-label"><span class="input-label">Name & Surname</span><input ng-required type="text" placeholder="Profile's Name" ng-model="service.name" autocomplete="name" /></label>
-            <label class="item item-input item-floating-label"><span class="input-label">Email & Username</span><input ng-required type="email" placeholder="Your Email" ng-model="father.email" autocomplete="email" /></label>
-            <label class="item item-input item-floating-label" ng-if="!father.jesua.alpha"><span class="input-label">Password</span><input ng-required type="password" placeholder="Password" ng-model="father.password"/></label>
+            <label class="item item-input item-floating-label"><span class="input-label">Name & Surname</span><input required type="text" placeholder="Profile's Name" ng-model="service.name" name="name" autocomplete="name" ng-model-options="{ updateOn: 'blur' }" /></label>
+            <label class="item item-input item-floating-label"><span class="input-label">Email (Username)</span><input required type="email" placeholder="Your Email" ng-model="father.email" name="email" autocomplete="email"  /></label>
+            <label class="item item-input item-floating-label" ng-if="!father.jesua.alpha"><span class="input-label">Password</span><input required type="password" placeholder="Password" name="password" ng-model="father.password" ng-model-options="{updateOn:'blur'}" /></label>
+1.{{dataForm.$pristine}}<br/>
+2.{{dataForm.$dirty}}<br/>
+3.{{dataForm.$valid}}<br/>
+4.{{dataForm.$invalid}}<br/>
+4.{{dataForm.$error}}<br/>
             <label class="item item-input item-stacked-label">
                <span class="input-label">Gender</span>
                <ion-toggle ng-model="father.gender" toggle-class="toggle-calm" style="border:none;"  >{{!father.gender?"Female":"Male"}}</ion-toggle>

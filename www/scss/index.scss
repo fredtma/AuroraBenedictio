@@ -38,7 +38,7 @@ $grey:   #777;
 //============================================================================//
 //CUSTOMES CLASSES
 //============================================================================//
-//creates a grey scall image
+//IMAGE:: creates a grey scall image
 img.grey {
     filter: gray; /* IE6-9 */
     -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
@@ -52,19 +52,23 @@ img.grey {
    }
 }
 
-//changes the layout of the icon button
+//BUTTON:: changes the layout of the icon button
 .button.icon-modified{top:2px;height:20px;}
 .button.icon-modified:before{line-height: 30px;}
 
 //in the list of items the blockquote is modified
 .infoblock {position:absolute;right:0;top:0;font-size:0.8em;border-left: 5px solid $sky; margin-top:4px; }
 
-//custome title with shaddow
+//TITLE:: custome title with shaddow
 .myTitle{text-shadow: 1px 1px 5px #999;color: #ececec !important;font-size: 18px !important;}
 
-//add a shadow to icons.
+//ICON:: add a shadow to icons.
 .icon-shadow::before{text-shadow: 1px 0px 2px #999;}
 
-//blinking class for animations
+//BLINK:: class for animations
 .blink_me {animation-name: blinker;animation-duration: 1s;animation-timing-function: linear;animation-iteration-count: infinite;-webkit-animation-name: blinker;-webkit-animation-duration: 1s;-webkit-animation-timing-function: linear;-webkit-animation-iteration-count: infinite;-moz-animation-name: blinker;-moz-animation-duration: 1s;-moz-animation-timing-function: linear;-moz-animation-iteration-count: infinite;}
 @keyframes blinker {0% { opacity: 1.0; }50% { opacity: 0.0; }100% { opacity: 1.0; }}@-moz-keyframes blinker {0% { opacity: 1.0; }50% { opacity: 0.0; }100% { opacity: 1.0; }}@-webkit-keyframes blinker {0% { opacity: 1.0; }50% { opacity: 0.0; }100% { opacity: 1.0; }}
+
+//FORM:: validation
+form {.ng-dirty.ng-invalid{ border:1px solid #f00;}}//dirty and invalid
+form.isNotValide {.ng-invalid{ border:1px solid #f00;}}//submitted and invalid

@@ -83,15 +83,15 @@ function DashCtrl($scope,$ionicModal,online) {
 //============================================================================//
 function ProfileCtrl($scope,crud){
    crud.set($scope,'profile-list','details');
-$scope.submit=function(frm){iyona.on("form",frm); return false;}
+
    $scope.module.alpha=function(callback){
-      var name = $scope.service.name.split(" ");
-      $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day
+      if(isset($scope.service.name)){var name = $scope.service.name.split(" ");
+      $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day;}
       callback.call();//call the service function
    }
    $scope.module.delta=function(callback){
-      var name = $scope.service.name.split(" ");
-      $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day
+      if(isset($scope.service.name)){var name = $scope.service.name.split(" ");
+      $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day;}
       callback.call();//call the service function
    }
    $scope.$on("readyForm",function(data,notitia){
