@@ -70,5 +70,5 @@ img.grey {
 @keyframes blinker {0% { opacity: 1.0; }50% { opacity: 0.0; }100% { opacity: 1.0; }}@-moz-keyframes blinker {0% { opacity: 1.0; }50% { opacity: 0.0; }100% { opacity: 1.0; }}@-webkit-keyframes blinker {0% { opacity: 1.0; }50% { opacity: 0.0; }100% { opacity: 1.0; }}
 
 //FORM:: validation
-form {.ng-dirty.ng-invalid{ border:1px solid #f00;}}//dirty and invalid
-form.isNotValide {.ng-invalid{ border:1px solid #f00;}}//submitted and invalid
+form {.ng-dirty.ng-invalid{ border-bottom:1px solid #f00;}}//dirty and invalid
+form.isNotValide {.ng-invalid{ border-bottom:1px solid #f00;}}//submitted and invalid

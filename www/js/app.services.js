@@ -43,7 +43,7 @@ function online($resource,$http) {
          u.cons = server.notitia.idem;
          dynamis.set("USER_NAME", u, true)
       }//pour maitre un autre biscuit
-      if(typeof server.notitia !=="undefined" && typeof server.notitia.err !=="undefined") { iyona.err(server.notitia.err,server.notitia.msg); this.msg(server.notitia.msg); return false;}
+      if(typeof server.notitia !=="undefined" && typeof server.notitia.err !=="undefined") { iyona.err(server.notitia.err,server.notitia.msg); this.msg(server.notitia.msg,true,false); return false;}
       else if(typeof server.notitia !=="undefined" && typeof server.notitia.iota !=="undefined") return server;
       else {iyona.err('Online error',server);return false;}
    }//end verify
@@ -51,7 +51,7 @@ function online($resource,$http) {
    this.responseType=this.responseType||"json";
    this.post=function(url,params,callback){
 
-      if(!checkConnection()){this.msg("Your device is currently Offline.",true,"danger bold"); return false;}//@todo
+      if(!checkConnection()){this.msg("Your device is currently Offline.",true,false); return false;}//@todo
       $http.post(url,params,{"responseType":this.responseType,"cache":true,"headers":{"Content-Type":"application/x-www-form-urlencoded"},"withCredentials":true})
       .success(function(server){isViewLoading = {"display":"none"};callback(server);})
       .error(function(data,status,headers,config){isViewLoading = {"display":"none"};
@@ -61,12 +61,12 @@ function online($resource,$http) {
          iyona.on(data,status,headers,config,config.url);
       });
    }
-   this.msg=function(msg,permanent,err){//duplication of function from crud
+   this.msg=function(msg,permanent,clss){
       if(!msg) return;
       iyona.info(msg);
-      clss=clss!==false?"balanced":"assertive";
-      var clss=permanent!==true?clss+" blink_me":clss,$scopeLayout=_$("#notification").scope();
-      $scopeLayout.msg = {"text":msg,"err":err,"clss":clss};
+      clss=!isset(clss)? "balanced": (clss===false||clss===0)?"assertive":clss;
+      var clss=permanent!==true?clss+" blink_me":clss;
+      $scope.$parent.msg = {"text":msg,"clss":clss};
       if(permanent!==true)$timeout(function(){$scope.$parent.msg=false; },5000);
    }
 }

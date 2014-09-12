@@ -146,9 +146,9 @@ img.grey {
   100% {
     opacity: 1.0; } }
 form .ng-dirty.ng-invalid {
-  border: 1px solid #f00; }
+  border-bottom: 1px solid #f00; }
 
 form.isNotValide .ng-invalid {
-  border: 1px solid #f00; }
+  border-bottom: 1px solid #f00; }
 
 /*# sourceMappingURL=index.css.map */

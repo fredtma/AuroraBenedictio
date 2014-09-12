@@ -1,7 +1,7 @@
 angular.module('AlphaOmega.controllers', [])
 .controller('AppCtrl',['$scope','helper',AppCtrl])
 .controller('DashCtrl',['$scope','$ionicModal','online',DashCtrl])
-.controller('ProfileCtrl',['$scope','crud',ProfileCtrl])
+.controller('ProfileCtrl',['$scope','crud','$state',ProfileCtrl])
 .controller('ProfileListCtrl',['$scope','crud',ProfileListCtrl])
 .controller('ArticleCtrl',['$scope','$log',ArticlesCtrl])
 .controller('ArticleDetailsCtrl',['$scope','$stateParams','$ionicActionSheet',function(){}])
@@ -81,17 +81,19 @@ function DashCtrl($scope,$ionicModal,online) {
 
 }
 //============================================================================//
-function ProfileCtrl($scope,crud){
+function ProfileCtrl($scope,crud,$state){
    crud.set($scope,'profile-list','details');
-
+iyona.on('$state',$state);
    $scope.module.alpha=function(callback){
       if(isset($scope.service.name)){var name = $scope.service.name.split(" ");
       $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day;}
+      if($scope.father.password)$scope.father.password = md5($scope.father.password);
       callback.call();//call the service function
    }
    $scope.module.delta=function(callback){
       if(isset($scope.service.name)){var name = $scope.service.name.split(" ");
       $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day;}
+      if($scope.father.password)$scope.father.password = md5($scope.father.password);
       callback.call();//call the service function
    }
    $scope.$on("readyForm",function(data,notitia){
@@ -100,6 +102,7 @@ function ProfileCtrl($scope,crud){
          dob = dob.split("-")||[];
          if(dob.length>2){ $scope.service.year=dob[0];$scope.service.month=dob[1];$scope.service.day=dob[2];}
          $scope.service.name = notitia.iota[0].firstname+' '+notitia.iota[0].lastname;
+         if(notitia.transaction==="Alpha" && $state.current.name==="main.register") {$state.go("call.dash")}
       }
       else iyona.info("Could not set name",data,notitia);
    });
@@ -151,7 +154,7 @@ function articleListLogsCtrl($scope,$ionicSlideBoxDelegate,crud) {
 function logViewsCtrl($scope,$ionicSideMenuDelegate,$ionicLoading,$ionicPopup) {
    //disable and enable the slide menu
    $ionicSideMenuDelegate.canDragContent(false);
-   $scope.$on("$stateChangeStart",function(ev,newLoc,oldLoc){ console.warn("Change side menu"); $ionicSideMenuDelegate.canDragContent(true);});
+//   $scope.$on("$stateChangeStart",function(ev,newLoc,oldLoc){ console.warn("Change side menu"); $ionicSideMenuDelegate.canDragContent(true);});
 
    //$ionicLoading.show({"template":"<strong>Laoding</strong>...","delay":"0","duration":2000})
    //function to count the changes of the slides

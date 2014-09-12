@@ -12,13 +12,14 @@ function config($stateProvider,$urlRouterProvider,$httpProvider) {
       .state('call', {url: "/call",abstract: true,templateUrl: "cera/layout-side.html",controller: 'AppCtrl'})
       .state('call.dash', {url: "/dash",views: {'principle': {templateUrl: 'cera/dashboard.html',controller: 'DashCtrl'}}/**/})
       .state('call.profile', {url: "/profile/{jesua}",views: {'principle': {templateUrl: 'cera/mensa/profile-details.html',controller: 'ProfileCtrl'}}/**/})
-      .state('call.register', {url: "/register/{jesua}",views: {'principle': {templateUrl: 'cera/mensa/profile-registration.html',controller: 'ProfileCtrl'}}/**/})
       .state('call.profileList', {url: "/profileList/{jesua}",views: {'principle': {templateUrl: 'cera/mensa/profile-list.html',controller: 'ProfileListCtrl'}}/**/})
       .state('call.articles', {url: "/articles",views: {'principle': {templateUrl: 'cera/mensa/articles.html',controller: 'ArticlesCtrl'}}/**/})
       .state('call.article', {url: "/article/{jesua}/{field}/{search}",views: {'principle': {templateUrl: 'cera/mensa/article-logs.html',controller: 'ArticleLogsCtrl'}}/**/})
       .state('call.articleList', {url: "/articleList/{jesua}",views: {'principle': {templateUrl: 'cera/mensa/articleList-logs.html',controller: 'articleListLogsCtrl'}}/**/})
       .state('call.test', {url: "/test",views: {'principle': {templateUrl: 'cera/mensa/article-details.html',controller: 'ArticleDetailsCtrl'}}/**/})
-      .state('call.logviews', {url: "/logviews",views: {'principle': {templateUrl: 'cera/mensa/log-views.html',controller: 'logViewsCtrl'}}/**/});
+      .state('call.logviews', {url: "/logviews",views: {'principle': {templateUrl: 'cera/mensa/log-views.html',controller: 'logViewsCtrl',onExit:['$ionicSideMenuDelegate',function($ionicSideMenuDelegate){iyona.on('On Exit');$ionicSideMenuDelegate.canDragContent(true);}] }}/**/})
+      .state('main', {url: "/main",abstract: true,templateUrl: "cera/layout-single.html"})
+      .state('main.register', {url: "/register/{jesua}",views: {'principle': {templateUrl: 'cera/mensa/profile-registration.html',controller: 'ProfileCtrl'}}/**/});
    // if none of the above states are matched, use this as the fallback
    $urlRouterProvider.otherwise('/call/dash');
 

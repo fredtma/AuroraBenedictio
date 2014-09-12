@@ -10,11 +10,7 @@
             <label class="item item-input item-floating-label"><span class="input-label">Name & Surname</span><input required type="text" placeholder="Profile's Name" ng-model="service.name" name="name" autocomplete="name" ng-model-options="{ updateOn: 'blur' }" /></label>
             <label class="item item-input item-floating-label"><span class="input-label">Email (Username)</span><input required type="email" placeholder="Your Email" ng-model="father.email" name="email" autocomplete="email"  /></label>
             <label class="item item-input item-floating-label" ng-if="!father.jesua.alpha"><span class="input-label">Password</span><input required type="password" placeholder="Password" name="password" ng-model="father.password" ng-model-options="{updateOn:'blur'}" /></label>
-1.{{dataForm.$pristine}}<br/>
-2.{{dataForm.$dirty}}<br/>
-3.{{dataForm.$valid}}<br/>
-4.{{dataForm.$invalid}}<br/>
-4.{{dataForm.$error}}<br/>
+
             <label class="item item-input item-stacked-label">
                <span class="input-label">Gender</span>
                <ion-toggle ng-model="father.gender" toggle-class="toggle-calm" style="border:none;"  >{{!father.gender?"Female":"Male"}}</ion-toggle>
