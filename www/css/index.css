@@ -2,6 +2,90 @@
     Created on : 03 Jul 2014, 1:55:14 PM
     Author     : ftshimanga
 */
+.sky, a.sky {
+  color: #acd1e9; }
+
+.sky-bg {
+  background-color: #acd1e9; }
+
+.tabs-sky > .tabs,
+.tabs.tabs-sky {
+  border-color: #dddddd;
+  background-color: #acd1e9;
+  background-image: linear-gradient(0deg, #dddddd, #dddddd 50%, transparent 50%);
+  color: #444444; }
+  .tabs-sky > .tabs .tab-item .badge,
+  .tabs.tabs-sky .tab-item .badge {
+    background-color: #444444;
+    color: #acd1e9; }
+
+.tab-item.activated {
+  opacity: 1; }
+  .tab-item.activated.tab-item-stable {
+    color: #f8f8f8; }
+
+.item.item-sky {
+  border-color: #dddddd;
+  background-color: #acd1e9;
+  color: #444444; }
+
+.button.button-sky {
+  border-color: #dddddd;
+  background-color: #acd1e9;
+  color: #444444; }
+  .button.button-sky:hover {
+    color: #444444;
+    text-decoration: none; }
+  .button.button-sky.active, .button.button-sky.activated {
+    border-color: #cccccc;
+    background-color: #fafafa;
+    box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.15); }
+  .button.button-sky.button-clear {
+    border-color: transparent;
+    background: none;
+    box-shadow: none;
+    color: #dddddd; }
+  .button.button-sky.button-icon {
+    border-color: transparent;
+    background: none; }
+  .button.button-sky.button-outline {
+    border-color: #dddddd;
+    background: transparent;
+    color: #dddddd; }
+    .button.button-sky.button-outline.active, .button.button-sky.button-outline.activated {
+      background-color: #dddddd;
+      box-shadow: none;
+      color: #fff; }
+
+.bar.bar-sky {
+  border-color: #dddddd;
+  background-color: #acd1e9;
+  background-image: linear-gradient(0deg, #dddddd, #dddddd 50%, transparent 50%);
+  color: #444444; }
+  .bar.bar-sky .title {
+    color: #444444; }
+
+.bar-sky .button {
+  border-color: #dddddd;
+  background-color: #acd1e9;
+  color: #444444; }
+  .bar-sky .button:hover {
+    color: #444444;
+    text-decoration: none; }
+  .bar-sky .button.active, .bar-sky .button.activated {
+    border-color: #cccccc;
+    background-color: #fafafa;
+    box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.15); }
+  .bar-sky .button.button-clear {
+    border-color: transparent;
+    background: none;
+    box-shadow: none;
+    color: #444444;
+    font-size: 17px; }
+  .bar-sky .button.button-icon {
+    border-color: transparent;
+    background: none; }
+
 .dash {
   text-decoration: none;
   margin: 2px 0px; }
@@ -65,6 +149,11 @@
   margin-top: -7px; }
   .item .list .icon:before {
     font-size: 30px; }
+
+.input-label {
+  font-weight: bold; }
+  .input-label small {
+    font-weight: normal; }
 
 img.grey {
   filter: gray;
@@ -150,5 +239,8 @@ form .ng-dirty.ng-invalid {
 
 form.isNotValide .ng-invalid {
   border-bottom: 1px solid #f00; }
+
+.link {
+  cursor: pointer; }
 
 /*# sourceMappingURL=index.css.map */

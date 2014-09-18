@@ -3,7 +3,6 @@
 // -------------------------------
 
 $light:                           #fff !default;
-$sky:                             #acd1e9 !default;
 $stable:                          #f8f8f8 !default;
 $positive:                        #4a87ee !default;
 $calm:                            #43cee6 !default;
@@ -53,9 +52,9 @@ $padding-large-horizontal:        16px !default;
 $padding-small-vertical:          5px !default;
 $padding-small-horizontal:        10px !default;
 
-$border-radius-base:              0px !default;
-$border-radius-large:             1px !default;
-$border-radius-small:             0px !default;
+$border-radius-base:              4px !default;
+$border-radius-large:             6px !default;
+$border-radius-small:             3px !default;
 
 
 // Content
@@ -90,20 +89,14 @@ $button-small-icon-size:          16px !default;
 
 $button-bar-button-font-size:     13px !default;
 $button-bar-button-height:        32px !default;
-$button-bar-button-padding:       12px !default;
+$button-bar-button-padding:       8px !default;
 $button-bar-button-icon-size:     20px !default;
 
 $button-light-bg:                 $light !default;
-$button-light-text:               #6d929b !default;
-$button-light-border:             #c1dad6 !default;
-$button-light-active-bg:          #e8d0a9 !default;
-$button-light-active-border:      #000 !default;
-
-$button-sky-bg:                 $sky !default;
-$button-sky-text:               #444 !default;
-$button-sky-border:             #ddd !default;
-$button-sky-active-bg:          #fafafa !default;
-$button-sky-active-border:      #ccc !default;
+$button-light-text:               #444 !default;
+$button-light-border:             #ddd !default;
+$button-light-active-bg:          #fafafa !default;
+$button-light-active-border:      #ccc !default;
 
 $button-stable-bg:                $stable !default;
 $button-stable-text:              #444 !default;
@@ -175,12 +168,6 @@ $bar-light-border:                $button-light-border !default;
 $bar-light-active-bg:             $button-light-active-bg !default;
 $bar-light-active-border:         $button-light-active-border !default;
 
-$bar-sky-bg:                    rgba($button-sky-bg, $bar-transparency) !default;
-$bar-sky-text:                  $button-sky-text !default;
-$bar-sky-border:                $button-sky-border !default;
-$bar-sky-active-bg:             $button-sky-active-bg !default;
-$bar-sky-active-border:         $button-sky-active-border !default;
-
 $bar-stable-bg:                   rgba($button-stable-bg, $bar-transparency) !default;
 $bar-stable-text:                 $button-stable-text !default;
 $bar-stable-border:               $button-stable-border !default;
@@ -251,10 +238,6 @@ $tabs-light-bg:                   $button-light-bg !default;
 $tabs-light-border:               $button-light-border !default;
 $tabs-light-text:                 $button-light-text !default;
 
-$tabs-sky-bg:                   $button-sky-bg !default;
-$tabs-sky-border:               $button-sky-border !default;
-$tabs-sky-text:                 $button-sky-text !default;
-
 $tabs-stable-bg:                  $button-stable-bg !default;
 $tabs-stable-border:              $button-stable-border !default;
 $tabs-stable-text:                $button-stable-text !default;
@@ -295,7 +278,7 @@ $tab-item-max-width:              150px !default;
 
 $tabs-striped-off-color: #000;
 $tabs-striped-off-opacity: 0.4;
-$tabs-striped-border-width: 4px;
+$tabs-striped-border-width: 2px;
 
 
 // Items
@@ -303,7 +286,7 @@ $tabs-striped-border-width: 4px;
 
 $item-font-size:                  16px !default;
 $item-border-width:               1px !default;
-$item-padding:                    15px !default;
+$item-padding:                    16px !default;
 
 $item-button-font-size:           18px !default;
 $item-button-line-height:         32px !default;
@@ -324,12 +307,6 @@ $item-thumbnail-margin:           10px !default;
 $item-divider-bg:                 #f5f5f5 !default;
 $item-divider-color:              #222 !default;
 $item-divider-padding:            5px 15px !default;
-
-$item-sky-bg:                   $button-sky-bg !default;
-$item-sky-border:               $button-sky-border !default;
-$item-sky-text:                 $button-sky-text !default;
-$item-sky-active-bg:            $button-sky-active-bg !default;
-$item-sky-active-border:        $button-sky-active-border !default;
 
 $item-light-bg:                   $button-light-bg !default;
 $item-light-border:               $button-light-border !default;
@@ -566,9 +543,6 @@ $menu-animation-speed:            200ms !default;
 
 $menu-side-shadow:                -1px 0px 2px rgba(0, 0, 0, 0.2), 1px 0px 2px rgba(0,0,0,0.2) !default;
 
-$split-pane-menu-width:           320px !default;
-$split-pane-menu-border-color:    #eee !default;
-
 
 // Modals
 // -------------------------------
@@ -583,6 +557,27 @@ $modal-inset-mode-right:          20% !default;
 $modal-inset-mode-bottom:         20% !default;
 $modal-inset-mode-left:           20% !default;
 $modal-inset-mode-min-height:     240px !default;
+
+
+// Popovers
+// -------------------------------
+
+$popover-bg-color:                $light !default;
+$popover-backdrop-bg-active:      rgba(0,0,0,0.1) !default;
+$popover-backdrop-bg-inactive:    rgba(0,0,0,0) !default;
+$popover-width:                   220px !default;
+$popover-height:                  280px !default;
+$popover-large-break-point:       680px !default;
+$popover-large-width:             360px !default;
+
+$popover-box-shadow:              0 1px 3px rgba(0,0,0,0.4) !default;
+$popover-border-radius:           2px !default;
+
+$popover-box-shadow-ios:          0 0 40px rgba(0,0,0,0.08) !default;
+$popover-border-radius-ios:       10px !default;
+
+$popover-bg-color-android:        #fafafa !default;
+$popover-box-shadow-android:      0 2px 6px rgba(0,0,0,0.35) !default;
 
 
 // Grids
@@ -645,9 +640,6 @@ $badge-border-radius:             10px !default;
 $badge-light-bg:                  $button-light-bg !default;
 $badge-light-text:                $button-light-text !default;
 
-$badge-sky-bg:                  $button-sky-bg !default;
-$badge-sky-text:                $button-sky-text !default;
-
 $badge-stable-bg:                 $button-stable-bg !default;
 $badge-stable-text:               $button-stable-text !default;
 
@@ -679,33 +671,38 @@ $badge-default-text:              #AAAAAA !default;
 // Z-Indexes
 // -------------------------------
 
-$z-index-action-sheet:            11 !default;
-$z-index-badge:                   1 !default;
-$z-index-backdrop:                11 !default;
-$z-index-bar:                     10 !default;
 $z-index-bar-title:               0 !default;
-$z-index-bar-button:              1 !default;
-$z-index-item:                    2 !default;
-$z-index-item-checkbox:           3 !default;
 $z-index-item-drag:               0 !default;
 $z-index-item-edit:               0 !default;
-$z-index-item-options:            1 !default;
-$z-index-item-radio:              3 !default;
-$z-index-item-reordering:         9 !default;
-$z-index-item-toggle:             3 !default;
-$z-index-loading:                 13 !default;
 $z-index-menu:                    0 !default;
-$z-index-modal:                   10 !default;
+$z-index-badge:                   1 !default;
+$z-index-bar-button:              1 !default;
+$z-index-item-options:            1 !default;
 $z-index-pane:                    1 !default;
-$z-index-popup:                   12 !default;
-$z-index-scroll-bar:              9999 !default;
-$z-index-scroll-content-false:    10 !default;
 $z-index-slider-pager:            1 !default;
-$z-index-tabs:                    5 !default;
 $z-index-view:                    1 !default;
+$z-index-item:                    2 !default;
+$z-index-item-checkbox:           3 !default;
+$z-index-item-radio:              3 !default;
+$z-index-item-reorder:            3 !default;
+$z-index-item-toggle:             3 !default;
+$z-index-tabs:                    5 !default;
+$z-index-item-reordering:         9 !default;
+$z-index-bar:                     10 !default;
+$z-index-menu-scroll-content:     10 !default;
+$z-index-modal:                   10 !default;
+$z-index-popover:                 10 !default;
+$z-index-action-sheet:            11 !default;
+$z-index-backdrop:                11 !default;
+$z-index-menu-bar-header:         11 !default;
+$z-index-scroll-content-false:    11 !default;
+$z-index-popup:                   12 !default;
+$z-index-loading:                 13 !default;
+$z-index-scroll-bar:              9999 !default;
+$z-index-click-block:             99999 !default;
 
 
 // Platform
 // -------------------------------
 
-$ios7-statusbar-height:           20px !default;
+$ios-statusbar-height:           20px !default;

@@ -1,11 +1,11 @@
 angular.module('AlphaOmega.controllers', [])
 .controller('AppCtrl',['$scope','helper',AppCtrl])
 .controller('DashCtrl',['$scope','$ionicModal','online',DashCtrl])
-.controller('ProfileCtrl',['$scope','crud','$state',ProfileCtrl])
+.controller('ProfileCtrl',['$scope','crud','$state','online',ProfileCtrl])
 .controller('ProfileListCtrl',['$scope','crud',ProfileListCtrl])
 .controller('ArticleCtrl',['$scope','$log',ArticlesCtrl])
 .controller('ArticleDetailsCtrl',['$scope','$stateParams','$ionicActionSheet',function(){}])
-.controller('ArticleLogsCtrl',['$scope','crud',ArticleLogsCtrl])
+.controller('ArticleLogsCtrl',['$scope','crud','$stateParams','$ionicSlideBoxDelegate',ArticleLogsCtrl])
 .controller('articleListLogsCtrl',['$scope','$ionicSlideBoxDelegate','crud',articleListLogsCtrl])
 .controller('logViewsCtrl',['$scope','$ionicSideMenuDelegate','$ionicLoading','$ionicPopup',logViewsCtrl]);
 
@@ -17,7 +17,7 @@ angular.module('AlphaOmega.controllers', [])
 function AppCtrl($scope,helper) {
 
    $scope.articles = {};
-   $scope.articles.data =[
+   $scope.articles.data = [
       {"name":"first item", "desc":"This is the first item", "src":"img/article/first.jpg"},
       {"name":"second item", "desc":"This is the second item", "src":"img/article/second.jpg"},
       {"name":"third item", "desc":"This is the third item", "src":"img/article/third.jpg"},
@@ -31,19 +31,22 @@ function AppCtrl($scope,helper) {
    ];
    $scope.barscan=helper.barscan;
    $scope.logoff=helper.logoff;
-   $scope.profile = {"givenname":null,"position":null,"avatar":"img/default.jpg"};
+   $scope.goTo=helper.goTo;
+   $scope.sideMenu=true;
+   var row = impetroUser();
+   if(row)$scope.profile = {"givenname":row['nominis'],"position":row['operarius'],"avatar":"img/default.jpg","jesua":row['jesua']};
 }
 //============================================================================//
 /**
  * the controller for the Dashboard
  */
-function DashCtrl($scope,$ionicModal,online) {
+function DashCtrl($scope,$ionicModal,online) {iyona.on("Dasssssh");
    $scope.father = {};
    $ionicModal
    .fromTemplateUrl('cera/login.html',{"scope":$scope,"animation":"slide-in-up","focusFirstInput":true,"backdropClickToClose":false,"hardwareBackButtonClose":false})
    .then(function(modal){
       $scope.modal = modal;
-      if(!impetroUser().operarius||true) $scope.modal.show();
+      if(!impetroUser().operarius||false) $scope.modal.show();
    });
 
    $scope.loginDisplay = function(){ $scope.modal.show();};
@@ -56,21 +59,20 @@ function DashCtrl($scope,$ionicModal,online) {
    angular.extend($scope,{"module":{},"service":{}});
    $scope.service.attempt=0;
    $scope.module.login  =function(){
-      var u,p,setting= new configuration();
-      //if(false){varUSER_NAME = {"operarius":"fredtma","licencia":{"Alpha":true,"deLta":true,"omegA":true,"lego":true},"nominis":"Frederick Tshimanga","jesua":"d27974ca95fd620ac92cf95bf8c1d1f2","procurator":1,"cons":"rpa741cbbu8c53ekcnmi1m6p13"};dynamis.set("USER_NAME",USER_NAME);dynamis.set("USER_NAME",USER_NAME,true);setting.config();$scope.modal.remove();return;}
+      var u,p;
+
       u=$scope.father.username;p=md5($scope.father.password);//aliquis
-      if(!u || !p) {$scope.service.msg = "Please enter the username."; return false;}
+      if(!u || !p) {$scope.service.msg = "Please enter the username/password."; return false;}
+      sessionStorage.SITE_ALIQUIS = sessionStorage.SITE_ALIQUIS||'http://demo.xpandit.co.za/aura/aliquis';
       online.post(sessionStorage.SITE_ALIQUIS,{"u":u,"p":p},function(server){
-         var row;
+
          if(server.length){
-            row=server.rows[0];
-            var procurator=(row['level']==='super')?1:0,
-            USER_NAME={"operarius":row['username'],"licencia":row['aditum'],"nominis":row['name'],"jesua":row['jesua'],"procurator":procurator,"cons":row["sess"],"mail":row['email']};
-            dynamis.set("USER_NAME",USER_NAME);dynamis.set("USER_NAME",USER_NAME,true);//todo:add the remember me option
-            setting.config();//when login in run setup of default setting
+            var row=server.rows[0];
+            row.procurator=(row['level']==='super')?1:0;
+            registerUser(row);//will set the USER_NAME & setting.config()
             online.principio();//start and set local db
             $scope.modal.remove();
-            $scope.$parent.profile = {"givenname":row['name'],"position":rwo['email'],"avatar":"img/default.jpg"};
+            $scope.$parent.$parent.profile = {"givenname":row['name'],"position":row['email'],"avatar":row['img']||"img/default.jpg","jesua":row['jesua']};
             //@todo:change login details.
          }else{$scope.service.attempt++;msg='Failed login.Fill in your email address & click on forgot password';
             iyona.msg(msg,false," danger bold");
@@ -81,31 +83,41 @@ function DashCtrl($scope,$ionicModal,online) {
 
 }
 //============================================================================//
-function ProfileCtrl($scope,crud,$state){
+function ProfileCtrl($scope,crud,$state,online){iyona.on("Calling controller...");
    crud.set($scope,'profile-list','details');
-iyona.on('$state',$state);
+
    $scope.module.alpha=function(callback){
-      if(isset($scope.service.name)){var name = $scope.service.name.split(" ");
-      $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day;}
-      if($scope.father.password)$scope.father.password = md5($scope.father.password);
-      callback.call();//call the service function
+      profileCheck();callback.call();//call the service function
    }
    $scope.module.delta=function(callback){
-      if(isset($scope.service.name)){var name = $scope.service.name.split(" ");
-      $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day;}
-      if($scope.father.password)$scope.father.password = md5($scope.father.password);
-      callback.call();//call the service function
+      profileCheck();callback.call();//call the service function
    }
+   $scope.$on("failForm",function(data,notitia){$scope.father.password="";});
+   $scope.$on("newForm",function(data,notitia){
+      if(notitia.transaction==="Alpha" && $state.current.name==="main.register") {
+         registerUser({"username":$scope.father.email,"aditum":[],"name":$scope.service.name,"jesua":$scope.father.jesua.alpha,"procurator":0,"sess":null,"email":$scope.father.email});//will set the USER_NAME & setting.config()
+         online.principio();//start and set local db
+         iyona.msg("Hello and welcome "+$scope.service.name,true);
+         $scope.$parent.profile = {"givenname":$scope.service.name,"position":$scope.father.email,"avatar":row['img']||"img/default.jpg","jesua":$scope.father.jesua.alpha};
+         $state.go("call.dash");
+      }
+   });
    $scope.$on("readyForm",function(data,notitia){
-      if(typeof notitia.iota!=="undefined") {
+      if(typeof notitia.iota!=="undefined" && notitia.iota instanceof Array) {
          var dob = notitia.iota[0].dob;
-         dob = dob.split("-")||[];
-         if(dob.length>2){ $scope.service.year=dob[0];$scope.service.month=dob[1];$scope.service.day=dob[2];}
+         if(dob){
+            dob = dob.split("-")||[];
+            if(dob.length>2){ $scope.service.year=dob[0];$scope.service.month=dob[1];$scope.service.day=dob[2];
+         }}
          $scope.service.name = notitia.iota[0].firstname+' '+notitia.iota[0].lastname;
-         if(notitia.transaction==="Alpha" && $state.current.name==="main.register") {$state.go("call.dash")}
       }
       else iyona.info("Could not set name",data,notitia);
    });
+   function profileCheck(){
+      if(isset($scope.service.name)){var name = $scope.service.name.split(" ");
+      $scope.father.firstname = name[0];$scope.father.lastname  = name[1];$scope.father.dob = $scope.service.year+'-'+$scope.service.month+'-'+$scope.service.day;}
+      if(!$scope.father.jesua.alpha && $scope.father.password)$scope.father.password = md5($scope.father.password);//sulment les nouveaux mot de pass
+   };
 
 }
 //============================================================================//
@@ -123,12 +135,21 @@ function ArticlesCtrl($scope,$log) {
 /**
  * the controller for the article logs
  */
-function ArticleLogsCtrl($scope,crud) {
+function ArticleLogsCtrl($scope,crud,$stateParams,$ionicSlideBoxDelegate) {
    crud.set($scope,'article-logs','details');
+   if($stateParams.field!=="new item"){$scope.father.barcode=$stateParams.field;}
 
    $scope.module.alpha=function(callback){
-      $scope.father.code = $scope.father.code||uRand(5,true,true,true);iyona.on("ALPHA",$scope.father);
+      var d = new Date().getTime();
+      $scope.father.sub = $scope.father.sub||md5(d+'Jesus Christ is Lord');
+      $scope.father.code= $scope.father.code||uRand(5,true,true,true);iyona.on("ALPHA",$scope.father);
       callback.call();//call the service function
+   }
+   $scope.module.onSwipeLeft=function(x){
+      iyona.on('$ionicSlideBoxDelegate',$ionicSlideBoxDelegate.slidesCount(),$ionicSlideBoxDelegate.currentIndex(),x);
+      if($ionicSlideBoxDelegate.slidesCount()==$ionicSlideBoxDelegate.currentIndex()+1){
+         iyona.on("last");
+      }
    }
 }
 //============================================================================//

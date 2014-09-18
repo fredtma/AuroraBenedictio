@@ -2,10 +2,84 @@
     Created on : 03 Jul 2014, 1:55:14 PM
     Author     : ftshimanga
 */
-@import "ionic/variables";
+@import "ionic/variables","ionic/mixins";
 $white:  #ffffff;
 $red:    #ff0000;
 $grey:   #777;
+//============================================================================//
+//CUSTOM IONIC CLASSES
+//============================================================================//
+$sky:                           #acd1e9 !default;
+
+$button-sky-bg:                 $sky !default;
+$button-sky-text:               #444 !default;
+$button-sky-border:             #ddd !default;
+$button-sky-active-bg:          #fafafa !default;
+$button-sky-active-border:      #ccc !default;
+
+$bar-sky-bg:                    rgba($button-sky-bg, $bar-transparency) !default;
+$bar-sky-text:                  $button-sky-text !default;
+$bar-sky-border:                $button-sky-border !default;
+$bar-sky-active-bg:             $button-sky-active-bg !default;
+$bar-sky-active-border:         $button-sky-active-border !default;
+
+$tabs-sky-bg:                   $button-sky-bg !default;
+$tabs-sky-border:               $button-sky-border !default;
+$tabs-sky-text:                 $button-sky-text !default;
+
+$item-sky-bg:                   $button-sky-bg !default;
+$item-sky-border:               $button-sky-border !default;
+$item-sky-text:                 $button-sky-text !default;
+$item-sky-active-bg:            $button-sky-active-bg !default;
+$item-sky-active-border:        $button-sky-active-border !default;
+
+$badge-sky-bg:                  $button-sky-bg !default;
+$badge-sky-text:                $button-sky-text !default;
+//util
+.sky, a.sky {
+  color: $sky;
+}
+.sky-bg {
+  background-color: $sky;
+}
+//tabs
+.tabs-sky > .tabs,
+.tabs.tabs-sky {
+  @include tab-style($tabs-sky-bg, $tabs-sky-border, $tabs-sky-text);
+  @include tab-badge-style($tabs-sky-text, $tabs-sky-bg);
+}
+.tab-item.activated {
+  opacity: 1;
+  &.tab-item-stable {
+    color: $stable;
+   }
+}
+//items
+.item{
+  &.item-sky {
+    @include item-style($item-sky-bg, $item-sky-border, $item-sky-text);
+  }
+}
+//buttons
+.button {
+  &.button-sky {
+    @include button-style($button-sky-bg, $button-sky-border, $button-sky-active-bg, $button-sky-active-border, $button-sky-text);
+    @include button-clear($button-sky-border);
+    @include button-outline($button-sky-border);
+  }
+}
+//bars
+.bar {
+  &.bar-sky {
+    @include bar-style($bar-sky-bg, $bar-sky-border, $bar-sky-text);
+  }
+}
+.bar-sky {
+  .button {
+    @include button-style($bar-sky-bg, $bar-sky-border, $bar-sky-active-bg, $bar-sky-active-border, $bar-sky-text);
+    @include button-clear($bar-sky-text, $bar-title-font-size);
+  }
+}
 //============================================================================//
 //MODIFY CLASSES
 //============================================================================//
@@ -35,6 +109,8 @@ $grey:   #777;
 .action-sheet-group{.button{text-align: left;padding-left:100px;}}
 //changes the add icon on the bar
 .item .list {margin-top:-7px;   .icon:before {font-size:30px;}}
+//change the form label
+.input-label{font-weight:bold; small{font-weight:normal;}}
 //============================================================================//
 //CUSTOMES CLASSES
 //============================================================================//
@@ -72,3 +148,6 @@ img.grey {
 //FORM:: validation
 form {.ng-dirty.ng-invalid{ border-bottom:1px solid #f00;}}//dirty and invalid
 form.isNotValide {.ng-invalid{ border-bottom:1px solid #f00;}}//submitted and invalid
+
+//LINK:: cursor
+.link{cursor: pointer;}

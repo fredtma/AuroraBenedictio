@@ -196,8 +196,14 @@ dynamis={
    }
 };
 //============================================================================//
-(function(){var settings = new configuration();settings.config(); })();//run the configurations
+(function(){(new configuration()).config(); })();//run the configurations
 _$=function(element){if(typeof element==="string")return angular.element(document.querySelectorAll(element)); else return angular.element(element);};
+//============================================================================//
+function registerUser(row){
+   var USER_NAME={"operarius":row['username'],"licencia":row['aditum'],"nominis":row['name'],"jesua":row['jesua'],"procurator":row['procurator'],"cons":row["sess"],"mail":row['email']};
+   dynamis.set("USER_NAME",USER_NAME);dynamis.set("USER_NAME",USER_NAME,true);//todo:add the remember me option
+   (new configuration()).config();//when login in run setup of default setting, necessary incase of logoff
+}
 //============================================================================//
 /*
  * check if the browser supports html5 validation
@@ -357,7 +363,7 @@ function impetroUser(){
 function setQuaerere(mensa,res,tau,consuetudinem) {
     var procus=impetroUser(),moli=screen.height*screen.width,cons=consuetudinem||0;
     var quaerere={"eternal":res,"Tau":tau,"mensa":mensa,"procus":procus.jesua||0,"moli":moli,"consuetudinem":cons,"cons":procus.cons||0,"location":sessionStorage.SITE_LOCA};
-    dynamis.set("quaerere",JSON.stringify(quaerere));
+    dynamis.set("quaerere",quaerere);
     return quaerere;
 }
 //=============================================================================//

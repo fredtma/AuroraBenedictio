@@ -1,22 +1,22 @@
 <ion-side-menus>
 
-   <ion-pane ion-side-menu-content>
+   <ion-side-menu-content edge-drag-threshold="true">
       <ion-nav-bar class="bar-sky nav-title-slide-ios7"  align-title="left">
          <ion-nav-buttons side="left"><button menu-toggle="left" class="button button-icon icon ion-navicon"></button></ion-nav-buttons>
          <ion-nav-buttons side="right"><button menu-close class="button button-icon icon ion-camera icon-shadow" ng-click="barscan()" ></button></ion-nav-buttons>
          <ion-nav-buttons side="right"><button menu-close class="button button-icon icon ion-log-out assertive-bg icon-shadow" ng-click="logoff()" ></button></ion-nav-buttons>
-         <ion-nav-back-button class="button-clear"style="margin-right:7px"><i class="icon ion-ios7-arrow-back"></i></ion-nav-back-button>
+         <ion-nav-back-button class="button-clear" style="margin-right:7px"><i class="icon ion-ios7-arrow-back"></i></ion-nav-back-button>
       </ion-nav-bar>
-      <header ng-if="msg" class="bar bar-small bar-subheader bar-dark"><h5 id="notification" ng-class="msg.clss"  >{{msg.text}}</h5></header>
+      <header ng-show="msg" class="bar bar-small bar-subheader bar-dark"><h5 id="notification" ng-class="msg.clss"  >{{msg.text}}</h5></header>
       <ion-nav-view name="principle" class="slide-left-right-ios7"></ion-nav-view>
-   </ion-pane>
+   </ion-side-menu-content>
 
-   <ion-side-menu side="left" expose-aside-whene="large">
+   <ion-side-menu side="left" is-enabled="sideMenu" expose-aside-when="false">
       <header class="bar bar-sky bar-header">
-         <div class="row user-avatar" ui-sref="call.profile">
-            <div class="col col-20"><img ng-src="{{profile.avatar||'img/article/photo.jpg'}}"/></div>
-            <div class="col col-80">
-               <h2 class="title-left" ng-bind="profile.gevenname"></h2>
+         <div class="row user-avatar link" ng-click="goTo('call.profile',{'jesua':profile.jesua})">
+            <div class="col col-25"><img ng-src="{{profile.avatar||'img/article/photo.jpg'}}"/></div>
+            <div class="col col-75">
+               <h2 class="title-left" ng-bind="profile.givenname"></h2>
                <h3 class="title-left" ng-bind="profile.position"></h3>
             </div>
          </div>
