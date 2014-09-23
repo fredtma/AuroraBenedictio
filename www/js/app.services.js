@@ -68,7 +68,7 @@ function online($resource,$http,$timeout) {
       clss=permanent!==true?clss+" blink_me":clss;
       var $scopeLayout = _$("#notification").scope();
       $scopeLayout.msg = {"text":msg,"clss":clss};
-      if(permanent!==true)$timeout(function($scopeLayout){$scopeLayout.msg=false; },5000);
+      if(permanent!==true)$timeout(function(){$scopeLayout.msg=false; },5000);
    };
 }
 //############################################################################//
@@ -91,14 +91,22 @@ function helper($ionicPopup,$ionicActionSheet,$state){
          }//end for array module
       }//end if module array
    };//end func set
-   this.initForm=function(form){iyona.off("initForm",form,$scope); $scope.formScope = form; $scope.service.patterns = dynamis.get("EXEMPLAR"); };
-   this.action=function(){
+   this.initForm=function(form){
+      iyona.off("initForm",form,$scope);
+      $scope.formScope = form;
+      if(isset($scope.$parent.formScope)) {
+         $scope.$parent.formScope.push(form);
+         $scope.formScope = $scope.$parent.formScope[0];}//use for multiple form and innitial to the 1st form.
+      else $scope.$parent.formScope = [form];
+      $scope.service.patterns = dynamis.get("EXEMPLAR");
+   };
+   this.action=function(text){
 
       var title,submitTxt,buttons,custModule;
       title = curNode.display.title;
 
-      if(!$scope.service.jesua) submitTxt = "<i class='icon ion-ios7-paper-outline' i></i> Create "+title;
-      else submitTxt = "<i class='icon ion-ios7-compose-outline' i></i> Update "+title;
+      if(!$scope.service.jesua){text = text||'Create '; submitTxt = "<i class='icon ion-ios7-paper-outline' i></i> "+text+title;}
+      else {text=text||'Update ';submitTxt = "<i class='icon ion-ios7-compose-outline' i></i> "+text+title;}
       //create default submit and add custom action modules, this includes text & module to be called.
       buttons = [{"text":submitTxt,"type":"submit"}];
       if(curNode.display.action instanceof Array){buttons = buttons.concat(curNode.display.action);}
@@ -142,11 +150,13 @@ function helper($ionicPopup,$ionicActionSheet,$state){
       });
 
    };
-   this.getPicture=function(e,field,ele,filename){
+   this.getPicture=function(e,field,ele,filename,ndx){
       //native browser
       if(typeof navigator.camera === "undefined") {
          var file,reader;
-         iyona.err("Camera option not available.",navigator,e.target,ele,e.target.type,e.target.type!=='file',isset(ele),!isset(ele));
+         $scope.service.tmp = isset(ndx)?ndx:isset($scope.service.tmp)?$scope.service.tmp:null;//this stores the ndx in a tmp. when calling from a desktop the function is called x2, the 2nd time it does not have ndx, heance why it's stored
+         ndx = isset(ndx)?ndx:$scope.service.tmp;
+         iyona.err("Camera option not available.",e.target,ele);
          if(e.target.type!=='file' && !isset(ele))return false;
          else if(e.target.type!=='file' && isset(ele)){_$(ele)[0].click(); return false;}
 
@@ -160,8 +170,10 @@ function helper($ionicPopup,$ionicActionSheet,$state){
             _$(".captureImg")[0].src = evt.target.result;
             $scope.$apply(function(){
                $scope.father[field] = {"alpha":evt.target.result,"icon":filename||file.name,"type":file.type};
+               if(isset(ndx))$scope.generations[ndx][field] = {"alpha":evt.target.result,"icon":filename||file.name,"type":file.type};
+               iyona.on('generation',ndx,$scope.generations[ndx]);
             });
-            iyona.on('event',evt,$scope.father[field],'---',evt.target.result,typeof evt.target.result,file);
+            iyona.off('event',evt,$scope.father[field],'---',file);
          }
          $scope.formScope.dataForm.$dirty = true;
          return false;
@@ -172,7 +184,8 @@ function helper($ionicPopup,$ionicActionSheet,$state){
             iyona.info("Capturing image",Camera);
             e.target.src = "data:image/jpeg;base64,"+img;
             if (img >1200000)  {iyona.msg("The selected file is larger than 1MB."); return false;}
-            $scope.father[field] = {"icon":img,"alpha":filename||"image.jpg"};
+            $scope.father[field] = {"alpha":img,"icon":filename||"image.jpg","type":"image/jpeg"};
+            if(isset(ndx))$scope.generations[ndx][field] = {"alpha":img,"icon":filename||"image.jpg","type":"image/jpeg"};
             $scope.formScope.dataForm.$dirty = true;
          },
          function(err){$ionicPopup.alert({"title":"Image Capture","template":"Could not capture the image::"+err}).then(function(){iyona.info("The image was no image captured::"+err);}); },
@@ -206,13 +219,21 @@ function helper($ionicPopup,$ionicActionSheet,$state){
 
       iyona.on("Ordering",item,from,to);
    };
-   this.enumWalk=function(opt){
+   this.enumWalk=function(opt,index){
+      if(typeof index==="undefined"){
+         var selected = $scope.father[opt].alpha? $scope.father[opt].alpha:0;
+         selected++;
 
-      var selected = $scope.father[opt].alpha? $scope.father[opt].alpha:0;
-      selected++;
+         if(typeof $scope.father[opt].enum[selected]!=="undefined")$scope.father[opt].alpha=selected;
+         else $scope.father[opt].alpha = 0;
+      }else if($scope.parent){
+         var value = $scope.generations[index][opt]? $scope.generations[index][opt]: 0;
+         var selected = typeof value==="string"?$scope.parent.fields[opt].enum.indexOf(value):value;
+         selected++;
 
-      if(typeof $scope.father[opt].enum[selected]!=="undefined")$scope.father[opt].alpha=selected;
-      else $scope.father[opt].alpha = 0;
+         if(typeof $scope.parent.fields[opt].enum[selected]!=="undefined")$scope.generations[index][opt]=selected;
+         else $scope.generations[index][opt] = $scope.parent.fields[opt].enum[0];
+      }
    };
    this.goTo=function(label,option){$state.go(label,option);}
 }
@@ -241,29 +262,37 @@ function crud(online,helper,$stateParams,$timeout,$state){
       $db = online.notitia({"view":"form","call":"benedictio","mensa":nodeName,"display":nodeDisplay});
 
       $scope.module.delete = function(rem,ndx){ rem = rem||$stateParams.jesua; if(typeof $scope.module.omega==="function")$scope.module.omega(function(){omega(rem,ndx);}); else omega(rem,ndx);};
+      //NEW::new creationg
       if($stateParams.jesua==="new" || $stateParams.jesua==="") {
          $stateParams.jesua   = null;
          $scope.service.jesua = null;
-         $scope.module.submit = submitFunction.new;
-      }
-      if($stateParams.jesua==="list"){
+         $scope.module.submit = this.submitFunction.new;
+      }//LIST:: listing of all
+      else if($stateParams.jesua==="list"){
          $stateParams.jesua = null;
          $scope.service.Tau = "sigma";
          sigmaList();
-      }
-      if($stateParams.jesua!==null && $stateParams.jesua!==""){
+      }//SEARCH:: customer search
+      else if($stateParams.search && $stateParams.jesua!==null && $stateParams.jesua!==""){
+         $db = online.notitia({"view":"form","call":"benedictio","mensa":nodeName,"display":nodeDisplay,"jesua":$stateParams.jesua,"fields":$stateParams.search});
          $scope.service.jesua = $stateParams.jesua;
-         $scope.module.submit = submitFunction.old;
+         $scope.service.Tau   = "sigma";
+         $scope.module.submit = this.submitFunction.old;
+         sigmaList();
+      }//EDIT
+      else if($stateParams.jesua!==null && $stateParams.jesua!==""){
+         $scope.service.jesua = $stateParams.jesua;
+         $scope.module.submit = this.submitFunction.old;
          sigma($stateParams.jesua);
       }//end if updating
 
    };//end function set
 
-   submitFunction = {
+   this.submitFunction = {
       "new":function(){
          $scope.service.Tau = "Alpha";
          $scope.service.title = "New "+curTitle;
-         if(typeof $scope.module.alpha==="function")$scope.module.alpha(function(){alpha();}); else alpha();},
+         if(typeof $scope.module.alpha==="function")$scope.module.alpha(function(ndx){alpha(ndx);}); else alpha();},
       "old":function(){
          $scope.service.Tau = "deLta";
          $scope.service.title = curTitle;
@@ -274,15 +303,8 @@ function crud(online,helper,$stateParams,$timeout,$state){
       RECORD = new $db.get({"jesua":jesua},function(server){
          if(online.verify(server)===false)return;
          var iota = server.notitia.iota[0];setConsuetudinem(server.notitia);
+         alphaMerge(curDisplay,iota,$scope);
 
-         for(var key in iota){//merge the result with defaultScope setting
-            if (iota[key]!==null&&isset($scope.father[key])&&$scope.father[key].hasOwnProperty("alpha")){
-               //for enumerators get index
-               if(typeof $scope.father[key].enum!=="undefined") {$scope.father[key].alpha = $scope.father[key].enum.indexOf(iota[key]);}
-               else $scope.father[key].alpha = iota[key];
-            }
-            else $scope.father[key]=iota[key];
-         }
          $scope.$broadcast("readyForm",server.notitia);iyona.on("Selected record server and father");that.msg(server.notitia.msg,false,'balanced');
       });
    }//end function sigma
@@ -291,12 +313,13 @@ function crud(online,helper,$stateParams,$timeout,$state){
       RECORD = new $db.get(function(server){
          if(online.verify(server)===false)return;
          var iota = server.notitia.iota;
+         $scope.parent = curDisplay;
          $scope.generations=server.notitia.iota;
          setConsuetudinem(server.notitia);
-         $scope.$broadcast("readyList",server.notitia);iyona.on("Selected record server and father");that.msg(server.notitia.msg,false,'balanced');
+         $scope.$broadcast("readyList",server.notitia);that.msg(server.notitia.msg,false,'balanced');
       });
    }//end function sigma
-   function alpha(){iyona.info("Creating a new record");
+   function alpha(ndx){iyona.info("Creating a new record");
 
       if(validateForm()===false){$scope.$broadcast("failForm");return false;}
       if(typeof $scope.father.created==="undefined") $scope.father.created = new Date().toISOString(); else if ($scope.father.created==="none") delete $scope.father.created;
@@ -308,8 +331,11 @@ function crud(online,helper,$stateParams,$timeout,$state){
          var notitia = server.notitia;
 
          $state.go($state.$current,{"jesua":notitia.iota},{ location: true, inherit: true, relative: $state.$current, notify: false, reload:false });//change url when creating
-         $scope.father.jesua.alpha = $stateParams.jesua = notitia.iota;//give jesua and service.jesua new value
-         $scope.module.submit = submitFunction.old;//change the value of the submit function to delta
+         //give jesua and service.jesua new value
+         if($scope.generations && ndx) {$scope.generations[ndx].jesua = notitia.iota;}
+         else if($scope.father.jesua) {$scope.father.jesua.alpha = notitia.iota; $stateParams.jesua = notitia.iota;}
+
+         $scope.module.submit = that.submitFunction.old;//change the value of the submit function to delta
          setConsuetudinem(server.notitia);
          that.msg(server.notitia.msg,false,'balanced');
          $scope.$broadcast("newForm",server.notitia);
@@ -320,10 +346,12 @@ function crud(online,helper,$stateParams,$timeout,$state){
 
       if(validateForm()===false){$scope.$broadcast("failForm");return false;}
       var basilia = setQuaerere(nodeName,$scope.father,$scope.service.Tau,consuetudinem);
+      var jesua   = isalpha($scope.father.jesua)||$stateParams.jesua;
       delete RECORD.notitia;
+      iyona.on("jesua",jesua,$scope.father.jesua,$stateParams.jesua);
       angular.extend(RECORD,basilia);
 
-      RECORD.$militia({"jesua":$stateParams.jesua},function(server){
+      RECORD.$militia({"jesua":jesua},function(server){
          if(online.verify(server)===false){$scope.$broadcast("failForm",server);return false;}
          var notitia = server.notitia;
          setConsuetudinem(server.notitia);
@@ -342,7 +370,7 @@ function crud(online,helper,$stateParams,$timeout,$state){
    }//end function omega
    function validateForm(){
       var form = $scope.formScope,dataForm=form.dataForm,msg='';
-      if(dataForm.$dirty===false) msg = "No changes detected on the form";
+      if(dataForm.$dirty===false) msg = " No changes detected on the form";
       if(dataForm.$dirty && dataForm.$valid) return true;
 
       $scope.service.isValide = 'isNotValide';

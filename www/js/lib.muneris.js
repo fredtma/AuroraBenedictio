@@ -580,9 +580,24 @@ function isfull(val){
 //============================================================================//
 //check element structure to find value in current form and alpha form
 function isalpha(obj){
-   if(hasValue(obj)) return obj;
-   else if(isset(obj)&&hasValue(obj.alpha)) return obj.alpha;
+   if(isfull(obj)) return obj;
+   else if(isset(obj)&&isfull(obj.alpha)) return obj.alpha;
    return false;
+}
+//============================================================================//
+//alphamert is used to merge object with the alpha property
+function alphaMerge(map,val,$scope){
+
+   for(var key in val){//merge the result with defaultScope setting
+      if (val[key]!==null&&isset(map[key])&&map[key].hasOwnProperty("alpha")){
+         //for enumerators get index
+         iyona.on("Key",map[key],$scope.father[key],val[key]);
+         if(typeof map[key].enum!=="undefined") {$scope.father[key].alpha = (typeof val[key]==="string")?map[key].enum.indexOf(val[key]):val[key];}
+         else $scope.father[key].alpha = isalpha(val[key]);
+      }
+      else $scope.father[key]=val[key];
+   }
+   return $scope;
 }
 //============================================================================//
 

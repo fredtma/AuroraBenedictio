@@ -3,12 +3,13 @@ if(typeof Build!=="undefined" && typeof WebView!=="undefined" && Build.VERSION.S
     WebView.setWebContentsDebuggingEnabled(true);
 }
 angular.module('AlphaOmega', ['ionic', 'AlphaOmega.controllers', 'AlphaOmega.services'])
-.config(["$stateProvider","$urlRouterProvider","$httpProvider","$ionicConfigProvider",config])
+.config(["$stateProvider","$urlRouterProvider","$httpProvider","$ionicConfigProvider","$compileProvider",config])
 .run(["$ionicPlatform","$location",run]);
 
-function config($stateProvider,$urlRouterProvider,$httpProvider,$ionicConfigProvider) {
+function config($stateProvider,$urlRouterProvider,$httpProvider,$ionicConfigProvider,$compileProvider) {
    $httpProvider.defaults.withCredentials = true;
    $ionicConfigProvider.prefetchTemplates(true);
+   $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|blob|content):|data:image\//);
    $stateProvider
       .state('call', {url: "/call",abstract: true,templateUrl: "cera/layout-side.html",controller: 'AppCtrl'})
       .state('call.dash', {url: "/dash",views: {'principle': {templateUrl: 'cera/dashboard.html',controller: 'DashCtrl'}}/**/})

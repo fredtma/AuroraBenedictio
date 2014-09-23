@@ -5,7 +5,7 @@ angular.module('AlphaOmega.controllers', [])
 .controller('ProfileListCtrl',['$scope','crud',ProfileListCtrl])
 .controller('ArticleCtrl',['$scope','$log',ArticlesCtrl])
 .controller('ArticleDetailsCtrl',['$scope','$stateParams','$ionicActionSheet',function(){}])
-.controller('ArticleLogsCtrl',['$scope','crud','$stateParams','$ionicSlideBoxDelegate',ArticleLogsCtrl])
+.controller('ArticleLogsCtrl',['$scope','crud','$stateParams','$ionicSlideBoxDelegate','$timeout',ArticleLogsCtrl])
 .controller('articleListLogsCtrl',['$scope','$ionicSlideBoxDelegate','crud',articleListLogsCtrl])
 .controller('logViewsCtrl',['$scope','$ionicSideMenuDelegate','$ionicLoading','$ionicPopup',logViewsCtrl]);
 
@@ -135,22 +135,45 @@ function ArticlesCtrl($scope,$log) {
 /**
  * the controller for the article logs
  */
-function ArticleLogsCtrl($scope,crud,$stateParams,$ionicSlideBoxDelegate) {
+function ArticleLogsCtrl($scope,crud,$stateParams,$ionicSlideBoxDelegate,$timeout) {
    crud.set($scope,'article-logs','details');
    if($stateParams.field!=="new item"){$scope.father.barcode=$stateParams.field;}
 
    $scope.module.alpha=function(callback){
-      var d = new Date().getTime();
+      var d = new Date().getTime(),curIndx=$ionicSlideBoxDelegate.currentIndex();
       $scope.father.sub = $scope.father.sub||md5(d+'Jesus Christ is Lord');
       $scope.father.code= $scope.father.code||uRand(5,true,true,true);iyona.on("ALPHA",$scope.father);
+      alphaMerge($scope.father,$scope.generations[curIndx],$scope);
+      callback.call(curIndx);//call the service function
+   }
+   $scope.module.delta=function(callback){
+      var curIndx=$ionicSlideBoxDelegate.currentIndex();
+      alphaMerge($scope.father,$scope.generations[curIndx],$scope);
       callback.call();//call the service function
    }
-   $scope.module.onSwipeLeft=function(x){
-      iyona.on('$ionicSlideBoxDelegate',$ionicSlideBoxDelegate.slidesCount(),$ionicSlideBoxDelegate.currentIndex(),x);
-      if($ionicSlideBoxDelegate.slidesCount()==$ionicSlideBoxDelegate.currentIndex()+1){
-         iyona.on("last");
+   $scope.module.slideHasChanged=function(){
+      var curIndx=$ionicSlideBoxDelegate.currentIndex();
+      iyona.on('$ionicSlideBoxDelegate',$ionicSlideBoxDelegate.slidesCount(),curIndx,$scope.generations[curIndx].jesua);
+      $scope.formScope = $scope.$parent.formScope[curIndx];
+      if($ionicSlideBoxDelegate.slidesCount()==curIndx+1 && $scope.generations[curIndx].jesua){//last slide and it must hv Jesua
+         var newObject = {};
+         angular.copy($scope.generations[curIndx],newObject);
+         newObject.description= "Add a new description...";
+         newObject.location   = "Add a new Location...";
+         newObject.path       = null;
+         newObject.jesua      = null;
+         $scope.generations.push(newObject);
+         iyona.info("New Slide",$scope.generations[curIndx],newObject,curIndx);
+         $timeout(function(){$ionicSlideBoxDelegate.update();});
+      } else if(!$scope.generations[curIndx].jesua){
+         $scope.module.submit = crud.submitFunction.new;
+      } else if($scope.generations[curIndx].jesua){
+         $scope.module.submit = crud.submitFunction.old;
       }
    }
+   $scope.$on("readyList",function(data,notitia){
+      $timeout(function(){$ionicSlideBoxDelegate.update();});
+   });
 }
 //============================================================================//
 /**
