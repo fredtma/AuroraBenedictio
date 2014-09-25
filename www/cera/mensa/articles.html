@@ -1,4 +1,4 @@
-<ion-view title="Articles">
+<ion-view title="{{service.title}}">
    <ion-content class="has-header" has-header="true" has-bouncing="true" padding="false" >
       <div class="bar bar-header item-input" style="padding-left:0px;">
         <label class="item-input-wrapper light-bg" >
@@ -6,15 +6,19 @@
         </label>
         <button class="button button-clear " ng-click="search=null">Cancel</button>
       </div>
-      <div class="item item-divider item-icon-left"><i class="icon ion-archive"></i>List of Articles</div>
-      <ion-list show-reorder="false" can-swipe="true"  >
-         <ion-item ng-repeat="article in articles.data|filter:search"
-                   href="#/call/article/{{article.name}}"
-                   class="item item-thumbnail-left item-text-wrap">
-            <img ng-src="{{article.src}}" /><h2 ng-bind="article.name"></h2><p ng-bind="article.desc" style="font-size:0.8em;color:#aaa;"></p>
-            <blockquote class="infoblock">Location: Dimention Data<br/>Status: Repairing<br/>High Importance<br/></blockquote>
+      <div class="item item-divider item-icon-left item-button-right">
+         <i class="icon ion-archive"></i>
+         List of Articles
+         <button class="list button button-clear button-assertive" style="right:60px;" ng-click="service.deleteItem = !service.deleteItem"><i class="icon ion-close-circled icon-shadow"></i></button>
+         <button class="list button button-clear button-balanced" ui-sref="call.article({jesua:'create','field':'new item','search':'sub'})"><i class="icon ion-plus-circled icon-shadow"></i></button>
+      </div>
+      <ion-list show-reorder="false" can-swipe="true" show-delete="service.deleteItem" >
+         <ion-item ng-repeat="father in generations|filter:search" href="#/call/article/{{father.sub}}/article/sub" class="item item-thumbnail-left item-text-wrap">
+            <img ng-src="{{father.path}}" /><h2 ng-bind="father.description"></h2><p ng-bind="father.location" style="font-size:0.8em;color:#aaa;"></p>
+            <blockquote class="infoblock">Status: <strong ng-bind="father.status"></strong><br/>Assign to: <strong ng-bind="father.assign"></strong><br/>Importance: <strong ng-bind="father.urgency"></strong></blockquote>
             <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(article, $fromIndex, $toIndex)"></ion-reorder-button>
-            <ion-option-button class=""><a style="padding-top:15px;" class="button button-icon icon ion-close-circled assertive"></a> </ion-option-button>
+            <ion-option-button ng-click="module.delete(father.jesua,$index)" class=""><a style="padding-top:15px;" class="button button-icon icon ion-close-circled assertive"></a> </ion-option-button>
+            <ion-delete-button class="ion-close-circled" ng-click="module.delete(father.jesua,$index)"></ion-delete-button>
          </ion-item>
       </ion-list>
 

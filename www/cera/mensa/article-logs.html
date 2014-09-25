@@ -8,8 +8,8 @@
                      <img src="img/article/photo1.jpg">
                      <h2>Administrator Name</h2><p>Position</p>
                   </div>
-                  <div class="item item-body">{{father.path}}
-                     <img id="imageItem"  class="img{{$index}} captureImg full-image link" ng-src="{{father.path||'img/default.jpg'}}" ng-click="module.getPicture($event,'path','#imageFile',null,$index )" />
+                  <div class="item item-body">
+                     <img id="imageItem"  class="img{{$index}} captureImg full-image link" ng-src="{{father.path.alpha||father.path||'img/default.jpg'}}" ng-click="module.getPicture($event,'path','#imageFile',null,$index )" />
                      <input id="imageFile" name="imageFile" type="file" accept="image/jpeg" style="display:none" multiple placeholder="Image File" onchange="angular.element(this).scope().module.getPicture(event,'path',null,null)" />
                      <input type="hidden" ng-model="father.jesua.alpha" />
                      <input type="hidden" ng-model="father.code" />
@@ -22,7 +22,7 @@
                         <span class="input-label">Location</span>
                         <input type="text" required ng-model="father.location" placeholder="Where is the item's current location" />
                      </label>
-                  </div>{{dataForm.$dirty}}
+                  </div>
                   <div class="item tabs tabs-secondary tabs-icon-left " >
                      <button class="tab-item button icon-left ion-flag button-clear button-positive" ng-click="module.enumWalk('status',$index)">
                         Status <span class="positive" ng-bind="parent.fields.status.enum[father.status]||father.status"></span>

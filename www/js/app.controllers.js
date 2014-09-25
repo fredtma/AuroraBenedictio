@@ -3,9 +3,9 @@ angular.module('AlphaOmega.controllers', [])
 .controller('DashCtrl',['$scope','$ionicModal','online',DashCtrl])
 .controller('ProfileCtrl',['$scope','crud','$state','online',ProfileCtrl])
 .controller('ProfileListCtrl',['$scope','crud',ProfileListCtrl])
-.controller('ArticleCtrl',['$scope','$log',ArticlesCtrl])
+.controller('ArticleCtrl',['$scope','crud',ArticlesCtrl])
 .controller('ArticleDetailsCtrl',['$scope','$stateParams','$ionicActionSheet',function(){}])
-.controller('ArticleLogsCtrl',['$scope','crud','$stateParams','$ionicSlideBoxDelegate','$timeout',ArticleLogsCtrl])
+.controller('ArticleLogsCtrl',['$scope','crud','helper','$stateParams','$ionicSlideBoxDelegate','$timeout',ArticleLogsCtrl])
 .controller('articleListLogsCtrl',['$scope','$ionicSlideBoxDelegate','crud',articleListLogsCtrl])
 .controller('logViewsCtrl',['$scope','$ionicSideMenuDelegate','$ionicLoading','$ionicPopup',logViewsCtrl]);
 
@@ -16,19 +16,6 @@ angular.module('AlphaOmega.controllers', [])
  */
 function AppCtrl($scope,helper) {
 
-   $scope.articles = {};
-   $scope.articles.data = [
-      {"name":"first item", "desc":"This is the first item", "src":"img/article/first.jpg"},
-      {"name":"second item", "desc":"This is the second item", "src":"img/article/second.jpg"},
-      {"name":"third item", "desc":"This is the third item", "src":"img/article/third.jpg"},
-      {"name":"fourth item", "desc":"This is the fourth item", "src":"img/article/fourth.jpg"},
-      {"name":"fith item", "desc":"This is the fith item", "src":"img/article/fith.jpg"},
-      {"name":"sixth item", "desc":"This is the sixth item", "src":"img/article/sixth.jpg"},
-      {"name":"seventh item", "desc":"This is the seventh item", "src":"img/article/seventh.jpg"},
-      {"name":"eight item", "desc":"This is the eight item", "src":"img/article/eight.jpg"},
-      {"name":"nineth item", "desc":"This is the nineth item", "src":"img/article/nineth.jpg"},
-      {"name":"tenth item", "desc":"This is the tenth item", "src":"img/article/tenth.jpg"}
-   ];
    $scope.barscan=helper.barscan;
    $scope.logoff=helper.logoff;
    $scope.goTo=helper.goTo;
@@ -126,25 +113,24 @@ function ProfileListCtrl($scope,crud){crud.set($scope,'profile-list','list');}
 /**
  * the controller for the article
  */
-function ArticlesCtrl($scope,$log) {
+function ArticlesCtrl($scope,crud) {
+   crud.set($scope,'article-logs','list');
 
-   $scope.reorderItem=function(item,from,to){};
-   $scope.itemSwipe=function(tmp){}
 }
 //============================================================================//
 /**
  * the controller for the article logs
  */
-function ArticleLogsCtrl($scope,crud,$stateParams,$ionicSlideBoxDelegate,$timeout) {
+function ArticleLogsCtrl($scope,crud,helper,$stateParams,$ionicSlideBoxDelegate,$timeout) {
    crud.set($scope,'article-logs','details');
    if($stateParams.field!=="new item"){$scope.father.barcode=$stateParams.field;}
 
    $scope.module.alpha=function(callback){
       var d = new Date().getTime(),curIndx=$ionicSlideBoxDelegate.currentIndex();
       $scope.father.sub = $scope.father.sub||md5(d+'Jesus Christ is Lord');
-      $scope.father.code= $scope.father.code||uRand(5,true,true,true);iyona.on("ALPHA",$scope.father);
+      $scope.father.code= $scope.father.code||uRand(5,true,true,true);
       alphaMerge($scope.father,$scope.generations[curIndx],$scope);
-      callback.call(curIndx);//call the service function
+      callback(curIndx);//call the service function
    }
    $scope.module.delta=function(callback){
       var curIndx=$ionicSlideBoxDelegate.currentIndex();
@@ -166,12 +152,18 @@ function ArticleLogsCtrl($scope,crud,$stateParams,$ionicSlideBoxDelegate,$timeou
          iyona.info("New Slide",$scope.generations[curIndx],newObject,curIndx);
          $timeout(function(){$ionicSlideBoxDelegate.update();});
       } else if(!$scope.generations[curIndx].jesua){
+         $scope.module.action = function(){helper.action('Create ');};
          $scope.module.submit = crud.submitFunction.new;
       } else if($scope.generations[curIndx].jesua){
+         $scope.module.action = function(){helper.action('Update ');};
          $scope.module.submit = crud.submitFunction.old;
       }
    }
    $scope.$on("readyList",function(data,notitia){
+      var tmp1 = eternalCall('article-logs','details').display.fields,tmp2 = eternalCall('article-logs','details').display.fields;
+      tmp1.description = "Add a descripition here...";
+      if(notitia.iota instanceof Array === false)$scope.generations = [tmp1,tmp2];
+      iyona.on('$scope.generations',$scope.generations,notitia.iota.length,notitia.iota,notitia.iota instanceof Array);
       $timeout(function(){$ionicSlideBoxDelegate.update();});
    });
 }

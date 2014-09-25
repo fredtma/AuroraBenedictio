@@ -123,11 +123,18 @@ iyona={
       arguments[arguments.length++]=this.stack();
       console.warn('%c'+arguments[0],'background:#ff0000;color:#ececec;width:100%;display:block;font-weight:bold;',arguments);
    },
-   msg:  function(msg,permanent,clss){
+   msg:  function(msg,permanent,clss,angular){ angular = angular||true;
+      if(!msg) return;
       console.info(arguments);
-      clss=clss||'';
-      _$("#notification").html(msg).removeClass().addClass('blink_me '+clss);
-      if(permanent!==true)setTimeout(function(){_$("#notification").html("").removeClass('blink_me');},5000);
+      clss=!isset(clss)||clss===true? "balanced": (clss===false||clss===0)?"assertive":clss;
+      clss=permanent!==true?clss+" blink_me":clss;
+      var $scopeLayout = _$("#notification").scope();
+      $scopeLayout.msg = {"text":msg,"clss":clss};
+      if(permanent!==true)setTimeout(function(){
+         $scopeLayout.$apply(function(){$scopeLayout.msg = false;});
+         if(!angular)_$("#notification").html("").removeClass('blink_me');
+      },5000);
+      if(!angular)_$("#notification").html(msg).removeClass().addClass(clss);
    },
    on:  function(){
       if(this.view){
@@ -591,7 +598,7 @@ function alphaMerge(map,val,$scope){
    for(var key in val){//merge the result with defaultScope setting
       if (val[key]!==null&&isset(map[key])&&map[key].hasOwnProperty("alpha")){
          //for enumerators get index
-         iyona.on("Key",map[key],$scope.father[key],val[key]);
+         iyona.off("Key",map[key],$scope.father[key],val[key]);
          if(typeof map[key].enum!=="undefined") {$scope.father[key].alpha = (typeof val[key]==="string")?map[key].enum.indexOf(val[key]):val[key];}
          else $scope.father[key].alpha = isalpha(val[key]);
       }

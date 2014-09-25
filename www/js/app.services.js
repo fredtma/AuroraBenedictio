@@ -28,7 +28,7 @@ function online($resource,$http,$timeout) {
          var service = $resource(dynamis.get("SITE_API")+view, params, {"militia": {"method": "PUT", isArray: false, "cache": true, "responseType": "json", "withCredentials": true}});
          return service;
       }else{
-         this.msg("You are currently offline", true, "danger bold");
+         iyona.msg("You are currently offline", true, "danger bold");
          isViewLoading = {"display": "none"};
          return false;
       }
@@ -43,21 +43,21 @@ function online($resource,$http,$timeout) {
          u.cons = server.notitia.idem;
          dynamis.set("USER_NAME", u, true);
       }//pour maitre un autre biscuit
-      if(typeof server.notitia !=="undefined" && typeof server.notitia.err !=="undefined") { iyona.err(server.notitia.err,server.notitia.msg); this.msg(server.notitia.msg,true,false); return false;}
+      if(typeof server.notitia !=="undefined" && typeof server.notitia.err !=="undefined") { iyona.err(server.notitia.err,server.notitia.msg); iyona.msg(server.notitia.msg,true,false); return false;}
       else if(typeof server.notitia !=="undefined" && typeof server.notitia.iota !=="undefined") return server;
-      else {this.msg('An Online error occure and the transaction did not go through',false,true);return false;}
+      else {iyona.msg('An Online error occure and the transaction did not go through',false,true);return false;}
    };//end verify
    //async calls
    this.responseType=this.responseType||"json";
    this.post=function(url,params,callback){
 
-      if(!checkConnection()){this.msg("Your device is currently Offline.",true,false); return false;}//@todo
+      if(!checkConnection()){iyona.msg("Your device is currently Offline.",true,false); return false;}//@todo
       $http.post(url,params,{"responseType":this.responseType,"cache":true,"headers":{"Content-Type":"application/x-www-form-urlencoded"},"withCredentials":true})
       .success(function(server){isViewLoading = {"display":"none"};callback(server);})
       .error(function(data,status,headers,config){isViewLoading = {"display":"none"};
 
-         this.msg("There was an error in handling the transaction",true,'danger bold');
-         if(data&&"err" in data)this.msg(data.err,true,"danger",true);
+         iyona.msg("There was an error in handling the transaction",true,'danger bold');
+         if(data&&"err" in data)iyona.msg(data.err,true,"danger",true);
          iyona.on(data,status,headers,config,config.url);
       });
    };
@@ -161,13 +161,17 @@ function helper($ionicPopup,$ionicActionSheet,$state){
          else if(e.target.type!=='file' && isset(ele)){_$(ele)[0].click(); return false;}
 
          file = e.target.files[0];//{name,size,type}
-         if(file.type!=='image/jpeg') {iyona.msg("Only Jpeg images are allowed"); return false;}
+         if(!isset(file)) return false;
+         else if(file.type!=='image/jpeg') {iyona.msg("Only Jpeg images are allowed"); return false;}
          else if (file.size >1000000)  {iyona.msg("The selected file is larger than 1MB."); return false;}
          reader = new FileReader();
 //         reader.readAsBinaryString(file);//for binary
          reader.readAsDataURL(file);
          reader.onload = function(evt){
-            _$(".captureImg")[0].src = evt.target.result;
+
+            if(!ndx)_$(".captureImg")[0].src = evt.target.result;
+            else _$(".img"+ndx)[0].src = evt.target.result;
+
             $scope.$apply(function(){
                $scope.father[field] = {"alpha":evt.target.result,"icon":filename||file.name,"type":file.type};
                if(isset(ndx))$scope.generations[ndx][field] = {"alpha":evt.target.result,"icon":filename||file.name,"type":file.type};
@@ -305,7 +309,7 @@ function crud(online,helper,$stateParams,$timeout,$state){
          var iota = server.notitia.iota[0];setConsuetudinem(server.notitia);
          alphaMerge(curDisplay,iota,$scope);
 
-         $scope.$broadcast("readyForm",server.notitia);iyona.on("Selected record server and father");that.msg(server.notitia.msg,false,'balanced');
+         $scope.$broadcast("readyForm",server.notitia);iyona.on("Selected record server and father");iyona.msg(server.notitia.msg,false,'balanced');
       });
    }//end function sigma
    function sigmaList(){ if($db===false) return;
@@ -314,9 +318,9 @@ function crud(online,helper,$stateParams,$timeout,$state){
          if(online.verify(server)===false)return;
          var iota = server.notitia.iota;
          $scope.parent = curDisplay;
-         $scope.generations=server.notitia.iota;
+         $scope.generations=(server.notitia.iota instanceof Array)?server.notitia.iota:[];
          setConsuetudinem(server.notitia);
-         $scope.$broadcast("readyList",server.notitia);that.msg(server.notitia.msg,false,'balanced');
+         $scope.$broadcast("readyList",server.notitia);iyona.msg(server.notitia.msg,false,true);
       });
    }//end function sigma
    function alpha(ndx){iyona.info("Creating a new record");
@@ -330,14 +334,18 @@ function crud(online,helper,$stateParams,$timeout,$state){
          if(online.verify(server)===false){$scope.$broadcast("failForm",server);return false;}
          var notitia = server.notitia;
 
-         $state.go($state.$current,{"jesua":notitia.iota},{ location: true, inherit: true, relative: $state.$current, notify: false, reload:false });//change url when creating
          //give jesua and service.jesua new value
-         if($scope.generations && ndx) {$scope.generations[ndx].jesua = notitia.iota;}
-         else if($scope.father.jesua) {$scope.father.jesua.alpha = notitia.iota; $stateParams.jesua = notitia.iota;}
+         iyona.info('stateParams',$stateParams.jesua,ndx,$scope.generations);
+         if($scope.generations && ndx) {$scope.generations[ndx].jesua = notitia.iota; }
+         else if($scope.father.jesua) {
+            $scope.father.jesua.alpha = notitia.iota;
+            $stateParams.jesua = notitia.iota;
+            $state.go($state.$current,{"jesua":notitia.iota},{ location: true, inherit: true, relative: $state.$current, notify: false, reload:false });//change url when creating
+         }
 
          $scope.module.submit = that.submitFunction.old;//change the value of the submit function to delta
          setConsuetudinem(server.notitia);
-         that.msg(server.notitia.msg,false,'balanced');
+         iyona.msg(server.notitia.msg,false,'balanced');
          $scope.$broadcast("newForm",server.notitia);
       });
 
@@ -355,17 +363,17 @@ function crud(online,helper,$stateParams,$timeout,$state){
          if(online.verify(server)===false){$scope.$broadcast("failForm",server);return false;}
          var notitia = server.notitia;
          setConsuetudinem(server.notitia);
-         that.msg(notitia.msg,false,'balanced');
+         iyona.msg(notitia.msg,false,'balanced');
          $scope.$broadcast("editForm",server.notitia);
       });
    }//end function delta
    function omega(jesua,index){iyona.info("Deleting the record",jesua);
 
-      if(!jesua){this.msg("You need to add a new record first.",false,"assertive bold"); return false;}
+      if(!jesua){iyona.msg("You need to add a new record first.",false,"assertive bold"); return false;}
       RECORD.$delete({"jesua":jesua},function(server){iyona.on("server server server",server);
          if(online.verify(server)===false)return;
          if(index)$scope.generations.splice(index,1);
-         that.msg(server.notitia.msg,false,'balanced');
+         iyona.msg(server.notitia.msg,false,'balanced');
       });
    }//end function omega
    function validateForm(){
@@ -374,7 +382,7 @@ function crud(online,helper,$stateParams,$timeout,$state){
       if(dataForm.$dirty && dataForm.$valid) return true;
 
       $scope.service.isValide = 'isNotValide';
-      that.msg("The form is not valid, verify that all field are correct."+msg,true,false);
+      iyona.msg("The form is not valid, verify that all field are correct."+msg,true,false);
       iyona.on("Validation form=",form,'dataForm=',dataForm);
       return false;
    }
