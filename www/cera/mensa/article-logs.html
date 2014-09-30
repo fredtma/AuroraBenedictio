@@ -1,0 +1,43 @@
+<ion-view title="{{service.title}}">
+   <ion-content scroll="true" padding="true"  on-swipe-up="module.action()">
+      <ion-slide-box on-slide-changed="module.slideHasChanged($index)" show-pager="true" pager-click="true" pager-click="true">
+         <ion-slide ng-repeat="father in generations">
+            <div class="list card" >
+               <form name="dataForm" id="dataForm{{$index}}" novalidate ng-init="module.initForm(this)" ng-class="service.isValide"  ng-model-options="{ updateOn: 'blur' }" >
+                  <div class="item item-avatar">
+                     <img src="img/article/photo1.jpg">
+                     <h2>Administrator Name</h2><p>Position</p>
+                  </div>
+                  <div class="item item-body">
+                     <img id="imageItem"  class="img{{$index}} captureImg full-image link" ng-src="{{father.path.alpha||father.path||'img/default.jpg'}}" ng-click="module.getPicture($event,'path','#imageFile',null,$index )" />
+                     <input id="imageFile" name="imageFile" type="file" accept="image/jpeg" style="display:none" multiple placeholder="Image File" onchange="angular.element(this).scope().module.getPicture(event,'path',null,null)" />
+                     <input type="hidden" ng-model="father.jesua.alpha" />
+                     <input type="hidden" ng-model="father.code" />
+                     <input type="hidden" ng-model="father.barcode" />
+                     <label class="item item-input item-stacked-label">
+                        <span class="input-label">Description</span>
+                        <textarea required ng-model="father.description" rows="5" placeholder="Add the description of the item"></textarea>
+                     </label>
+                     <label class="item item-input item-stacked-label">
+                        <span class="input-label">Location</span>
+                        <input type="text" required ng-model="father.location" placeholder="Where is the item's current location" />
+                     </label>
+                  </div>
+                  <div class="item tabs tabs-secondary tabs-icon-left " >
+                     <button class="tab-item button icon-left ion-flag button-clear button-positive" ng-click="module.enumWalk('status',$index)">
+                        Status <span class="positive" ng-bind="parent.fields.status.enum[father.status]||father.status"></span>
+                     </button>
+                     <button class="tab-item button icon-left ion-alert button-clear button-assertive" ng-click="module.enumWalk('urgency',$index)">
+                        Urgency <span class="assertive" ng-bind="parent.fields.urgency.enum[father.urgency]||father.urgency"></span>
+                     </button>
+                     <button class="tab-item button icon-left ion-share button-clear button-balanced" ng-click="module.enumWalk('assign',$index)">
+                        Assign <span class="balanced" ng-bind="parent.fields.assign.enum[father.assign]||father.assign"></span>
+                     </button>
+                  </div>
+               </form>
+            </div>
+            <div style="height:50px;width:100%;"></div>
+         </ion-slide>
+      </ion-slide-box>
+   </ion-content>
+</ion-view>
