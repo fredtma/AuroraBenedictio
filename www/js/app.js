@@ -1,3 +1,6 @@
+/*
+ * @todo: splashscreen. http://devgirl.org/2014/09/29/new-icons-and-splash-screen-help-for-cordovaphonegap/ && http://learn.ionicframework.com/formulas/splash-screen/
+ */
 if(typeof Build!=="undefined" && typeof WebView!=="undefined" && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
    console.info("Build Set::",Build,WebView);
     WebView.setWebContentsDebuggingEnabled(true);
