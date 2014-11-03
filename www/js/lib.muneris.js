@@ -157,11 +157,11 @@ iyona={
       xhr.open(settings.method,settings.url,true);
       xhr.withCredentials=true;
       xhr.responseType=settings.format;
-      xhr.onreadystatechange=function(e){iyona.on("Begining...",this.readyState,this.status,this.response,settings);
+      xhr.onreadystatechange=function(e){iyona.off("Begining...",this.readyState,this.status,this.response,settings);
          if(this.readyState===4 && this.status===200){
             var response=this.response||"{}";//@fix:empty object so as to not cause an error
             if(typeof response==="string"&&settings.format==="json" )response=JSON.parse(response);//wen setting responseType to json does not work
-            else response=JSON.parse(response);
+            //else response=JSON.parse(response); //@change: if object is not a string, changes are that it is an object already
             if(typeof settings.callback==="function")settings.callback(response);
          }
       }//xhr.onload=function(e){iyona.on("III",e,this.readyState,this.status,this.response);};
