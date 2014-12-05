@@ -1,10 +1,10 @@
 angular.module('AlphaOmega.controllers', [])
 .controller('AppCtrl',AppCtrl)
+.controller('ArticleCtrl',ArticlesCtrl)
+.controller('ArticleLogsCtrl',ArticleLogsCtrl)
 .controller('DashCtrl',DashCtrl)
 .controller('ProfileCtrl',ProfileCtrl)
-.controller('ProfileListCtrl',ProfileListCtrl)
-.controller('ArticleCtrl',ArticlesCtrl)
-.controller('ArticleLogsCtrl',ArticleLogsCtrl);
+.controller('ProfileListCtrl',ProfileListCtrl);
 
 //============================================================================//
 /**
@@ -20,6 +20,88 @@ function AppCtrl(helper) {
    ctrl.sideMenu=true;
    var row = impetroUser();
    if(row)ctrl.profile = {"givenname":row['nominis'],"position":row['operarius'],"avatar":row['avatar']||"img/default.jpg","jesua":row['jesua']};
+}
+//============================================================================//
+/**
+ * the controller for the article
+ */
+ArticlesCtrl.$inject = ['crud'];
+function ArticlesCtrl(crud) {
+   var ctrl = this;
+   crud.set(ctrl,'article-logs','list');
+
+}
+//============================================================================//
+/**
+ * the controller for the article logs
+ */
+ArticleLogsCtrl.$inject = ['crud','helper','$stateParams','$ionicSlideBoxDelegate','$timeout'];
+function ArticleLogsCtrl(crud,helper,$stateParams,$ionicSlideBoxDelegate,$timeout) {iyona.info("Controller...");
+   var ctrl = this;
+   crud.set(ctrl,'article-logs','details');
+   if($stateParams.field!=="new item"){ctrl.father.barcode=$stateParams.field;}
+
+   ctrl.module.alpha=alpha;
+   ctrl.module.delta=delta;
+   ctrl.module.slideHasChanged=slideHasChanged;
+   ctrl.$on("readyList",readyList);
+
+   function alpha(callback){
+      var d = new Date().getTime(),curIndx=$ionicSlideBoxDelegate.currentIndex();
+      ctrl.father.sub = ctrl.father.sub||md5(d+'Jesus Christ is Lord');
+      ctrl.father.code= ctrl.father.code||uRand(5,true,true,true);
+      ctrl.father.barcode= ctrl.father.barcode||($stateParams.search!=="new item")?$stateParams.search:null;
+      alphaMerge(ctrl.father,ctrl.generations[curIndx],ctrl);//places the value of the generation saved in father's
+      callback(curIndx);//call the service function
+   }
+   function delta(callback){
+      var curIndx=$ionicSlideBoxDelegate.currentIndex();
+      alphaMerge(ctrl.father,ctrl.generations[curIndx],ctrl);
+      callback.call();//call the service function
+   }
+   function readyList(data,notitia){
+      //creates two record with different values, with the same sub and status, urgency, assign
+      var tmp1 = eternalCall('article-logs','details').display.fields,tmp2 = eternalCall('article-logs','details').display.fields,d = new Date().getTime(),sub = md5(d+'Jesus Christ is Lord');
+      tmp1.status = tmp1.urgency = tmp1.assign = 1;
+      tmp2.status = tmp2.urgency = tmp2.assign = 1;
+      tmp1.sub = sub; tmp2.sub = sub;
+      if(notitia.iota instanceof Array === false)ctrl.generations = [tmp1,tmp2];
+      if(ctrl.generations.length===1){//when there is only one object
+         var newObject={};
+         angular.copy(ctrl.generations[0],newObject);
+         newObject.description= "Add a new description...";
+         newObject.location   = "Add a new Location...";
+         newObject.path       = null;
+         newObject.jesua      = null;
+         ctrl.generations.push(newObject);
+      }
+      iyona.on('ctrl.generations',ctrl.generations,notitia.iota.length,notitia.iota,notitia.iota instanceof Array);
+      $timeout(function(){$ionicSlideBoxDelegate.update();});
+   }
+   function slideHasChanged(){
+      var curIndx=$ionicSlideBoxDelegate.currentIndex(),jesua = isalpha(ctrl.generations[curIndx].jesua);
+      iyona.on('$ionicSlideBoxDelegate',$ionicSlideBoxDelegate.slidesCount(),curIndx,ctrl.generations[curIndx].jesua, isalpha(ctrl.generations[curIndx].jesua));
+      ctrl.formScope = ctrl.$parent.formScope[curIndx];
+      //last slide and it must hv Jesua
+      if($ionicSlideBoxDelegate.slidesCount()==curIndx+1 && ctrl.generations[curIndx].jesua){
+         var newObject = {};
+         angular.copy(ctrl.generations[curIndx],newObject);
+         newObject.description= "Add a new description...";
+         newObject.location   = "Add a new Location...";
+         newObject.path       = null;
+         newObject.jesua      = null;
+         ctrl.generations.push(newObject);
+         iyona.info("New Slide",ctrl.generations[curIndx],newObject,curIndx);
+         $timeout(function(){$ionicSlideBoxDelegate.update();});
+      }
+      if(jesua===false){
+         ctrl.module.action = function(){helper.action('Create ');};
+         ctrl.module.submit = crud.submitFunction.new;
+      } else if(jesua){
+         ctrl.module.action = function(){helper.action('Update ');};
+         ctrl.module.submit = crud.submitFunction.old;
+      }
+   }
 }
 //============================================================================//
 /**
@@ -125,86 +207,4 @@ function ProfileCtrl(crud,$state,online){iyona.on("Calling controller...");
 //============================================================================//
 ProfileListCtrl.$inject = ['crud'];
 function ProfileListCtrl(crud){var ctrl = this;crud.set(ctrl,'profile-list','list');}
-//============================================================================//
-/**
- * the controller for the article
- */
-ArticlesCtrl.$inject = ['crud'];
-function ArticlesCtrl(crud) {
-   var ctrl = this;
-   crud.set(ctrl,'article-logs','list');
-
-}
-//============================================================================//
-/**
- * the controller for the article logs
- */
-ArticleLogsCtrl.$inject = ['crud','helper','$stateParams','$ionicSlideBoxDelegate','$timeout'];
-function ArticleLogsCtrl(crud,helper,$stateParams,$ionicSlideBoxDelegate,$timeout) {iyona.info("Controller...");
-   var ctrl = this;
-   crud.set(ctrl,'article-logs','details');
-   if($stateParams.field!=="new item"){ctrl.father.barcode=$stateParams.field;}
-
-   ctrl.module.alpha=alpha;
-   ctrl.module.delta=delta;
-   ctrl.module.slideHasChanged=slideHasChanged;
-   ctrl.$on("readyList",readyList);
-
-   function alpha(callback){
-      var d = new Date().getTime(),curIndx=$ionicSlideBoxDelegate.currentIndex();
-      ctrl.father.sub = ctrl.father.sub||md5(d+'Jesus Christ is Lord');
-      ctrl.father.code= ctrl.father.code||uRand(5,true,true,true);
-      ctrl.father.barcode= ctrl.father.barcode||($stateParams.search!=="new item")?$stateParams.search:null;
-      alphaMerge(ctrl.father,ctrl.generations[curIndx],ctrl);//places the value of the generation saved in father's
-      callback(curIndx);//call the service function
-   }
-   function delta(callback){
-      var curIndx=$ionicSlideBoxDelegate.currentIndex();
-      alphaMerge(ctrl.father,ctrl.generations[curIndx],ctrl);
-      callback.call();//call the service function
-   }
-   function readyList(data,notitia){
-      //creates two record with different values, with the same sub and status, urgency, assign
-      var tmp1 = eternalCall('article-logs','details').display.fields,tmp2 = eternalCall('article-logs','details').display.fields,d = new Date().getTime(),sub = md5(d+'Jesus Christ is Lord');
-      tmp1.status = tmp1.urgency = tmp1.assign = 1;
-      tmp2.status = tmp2.urgency = tmp2.assign = 1;
-      tmp1.sub = sub; tmp2.sub = sub;
-      if(notitia.iota instanceof Array === false)ctrl.generations = [tmp1,tmp2];
-      if(ctrl.generations.length===1){//when there is only one object
-         var newObject={};
-         angular.copy(ctrl.generations[0],newObject);
-         newObject.description= "Add a new description...";
-         newObject.location   = "Add a new Location...";
-         newObject.path       = null;
-         newObject.jesua      = null;
-         ctrl.generations.push(newObject);
-      }
-      iyona.on('ctrl.generations',ctrl.generations,notitia.iota.length,notitia.iota,notitia.iota instanceof Array);
-      $timeout(function(){$ionicSlideBoxDelegate.update();});
-   }
-   function slideHasChanged(){
-      var curIndx=$ionicSlideBoxDelegate.currentIndex(),jesua = isalpha(ctrl.generations[curIndx].jesua);
-      iyona.on('$ionicSlideBoxDelegate',$ionicSlideBoxDelegate.slidesCount(),curIndx,ctrl.generations[curIndx].jesua, isalpha(ctrl.generations[curIndx].jesua));
-      ctrl.formScope = ctrl.$parent.formScope[curIndx];
-      //last slide and it must hv Jesua
-      if($ionicSlideBoxDelegate.slidesCount()==curIndx+1 && ctrl.generations[curIndx].jesua){
-         var newObject = {};
-         angular.copy(ctrl.generations[curIndx],newObject);
-         newObject.description= "Add a new description...";
-         newObject.location   = "Add a new Location...";
-         newObject.path       = null;
-         newObject.jesua      = null;
-         ctrl.generations.push(newObject);
-         iyona.info("New Slide",ctrl.generations[curIndx],newObject,curIndx);
-         $timeout(function(){$ionicSlideBoxDelegate.update();});
-      }
-      if(jesua===false){
-         ctrl.module.action = function(){helper.action('Create ');};
-         ctrl.module.submit = crud.submitFunction.new;
-      } else if(jesua){
-         ctrl.module.action = function(){helper.action('Update ');};
-         ctrl.module.submit = crud.submitFunction.old;
-      }
-   }
-}
 //============================================================================//
