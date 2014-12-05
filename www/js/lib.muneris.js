@@ -207,7 +207,7 @@ dynamis={
 _$=function(element){if(typeof element==="string")return angular.element(document.querySelectorAll(element)); else return angular.element(element);};
 //============================================================================//
 function registerUser(row){
-   var USER_NAME={"operarius":row['username'],"licencia":row['aditum'],"nominis":row['name'],"jesua":row['jesua'],"procurator":row['procurator'],"cons":row["sess"],"mail":row['email']};
+   var USER_NAME={"operarius":row['username'],"licencia":row['aditum'],"nominis":row['name'],"jesua":row['jesua'],"procurator":row['procurator'],"cons":row["sess"],"mail":row['email'],"avatar":row['img']};
    dynamis.set("USER_NAME",USER_NAME);dynamis.set("USER_NAME",USER_NAME,true);//todo:add the remember me option
    (new configuration()).config();//when login in run setup of default setting, necessary incase of logoff
 }

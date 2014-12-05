@@ -38,7 +38,7 @@ configuration.prototype.config=function(){
    sessionStorage.SITE_DATE   = 'fullDate';
    sessionStorage.SITE_TIME   = 'mediumTime';
    sessionStorage.SITE_LOCA   = 'benedictio';
-   sessionStorage.SITE_URL    = 'https://demo.xpandit.co.za/aura/';
+   sessionStorage.SITE_URL    = 'http://demo.xpandit.co.za/aura/';
    sessionStorage.SITE_API    = sessionStorage.SITE_URL+i;
    sessionStorage.SITE_SERVICE= sessionStorage.SITE_URL+i+'services';
    sessionStorage.SITE_MILITIA= sessionStorage.SITE_URL+i+'notitia';
@@ -47,30 +47,25 @@ configuration.prototype.config=function(){
    sessionStorage.SITE_ALIQUIS= sessionStorage.SITE_URL+i+'aliquis';
    sessionStorage.SITE_UPLOADS= sessionStorage.SITE_URL+'uploads/';
    sessionStorage.MAIL_SUPPORT= 'support@xpandit.co.za';
-   sessionStorage.DB_NAME     = 'app_xpandit';
+   sessionStorage.DB_NAME     = 'app_benedictio';
    sessionStorage.DB_VERSION  = 1;//always use integer bcos of iDB
    sessionStorage.DB_DESC     = 'The local application Database';
    sessionStorage.DB_SIZE     = 15;
    sessionStorage.DB_LIMIT    = 20;
    conf = {
-      "Worker":         window.hasOwnProperty('Worker'),
-      "openDatabase":   "openDatabase" in window,
       "indexedDB":      "indexedDB" in window||"webkitIndexedDB" in window||"mozIndexedDB" in window||"msIndexedDB" in window,
-      "WebSocket":      window.hasOwnProperty('WebSocket'),
-      "history":        window.hasOwnProperty('history'),
+      "openDatabase":   typeof openDatabase!=="undefined"||"openDatabase" in window,
+      "Worker":         typeof window.Worker!=="undefined",
+      "WebSocket":      typeof window.WebSocket!=="undefined",
+      "history":        typeof window.history!=="undefined",
       "formValidation": hasFormValidation(),
-      "useWorker":      true,
-      "useIDB":         true,
-      "useWebSql":      false,
-      "useJSvalidation":true,
+      "jsValidation":   true,
       "isOnline":       navigator.onLine,
-      "Online":         true,//used in online service
       "projectID":      "17238315752",
       "chromeApp":      (typeof chrome !== "undefined" && typeof chrome.app.window!=="undefined")
    };
    sessionStorage.SITE_CONFIG   = JSON.stringify(conf);
-   iyona.sync({"url":sessionStorage.SITE_URL+'json/caecus-benedictio.json',"method":"get","format":"json","callback":function(data){
-      iyona.off("eternalScope-",data);
+   iyona.sync({"url":sessionStorage.SITE_URL+'json/caecus-benedictio.json',"method":"get","format":"json","callback":function(data){iyona.off("eternalScope::",data);
       dynamis.set("eternal",data,true);
    }});
    dynamis.set("EXEMPLAR",{
@@ -105,7 +100,7 @@ iyona={
    cons: console.log,
    stack:function(){
       var isChrome = navigator.userAgent.indexOf("Chrome") !== -1;
-      if(isChrome||true){
+      if(isChrome||false){
          var stack = new Error().stack,n=isChrome?3:2;
          var file = stack.split("\n")[n].split("/");
          return '('+file[file.length-1]+')';}
@@ -128,24 +123,31 @@ iyona={
       arguments[arguments.length++]=this.stack();
       console.warn('%c'+arguments[0],'background:#ff0000;color:#ececec;width:100%;display:block;font-weight:bold;',arguments);
    },
-   msg:  function(msg,permanent,clss){
+   msg:  function(msg,permanent,clss,angular){ angular = angular||true;
+      if(!msg) return;
       console.info(arguments);
-      clss=clss||'';
-      _$("#notification").html(msg).removeClass().addClass('blink_me '+clss);
-      if(permanent!==true)setTimeout(function(){_$("#notification").html("").removeClass('blink_me');},5000);
+      clss=!isset(clss)||clss===true? "balanced": (clss===false||clss===0)?"assertive":clss;
+      clss=permanent!==true?clss+" blink_me":clss;
+      var $scopeLayout = _$("#notification").scope();
+      $scopeLayout.msg = {"text":msg,"clss":clss};
+      if(permanent!==true)setTimeout(function(){
+         $scopeLayout.$apply(function(){$scopeLayout.msg = false;});
+         if(!angular)_$("#notification").html("").removeClass('blink_me');
+      },5000);
+      if(!angular)_$("#notification").html(msg).removeClass().addClass(clss);
    },
-   deb:  function(){
+   on:  function(){
       if(this.view){
          arguments[arguments.length++]=this.stack();
          this.cons.apply(console,arguments);
       }
    }/*break down all set var into arr, custom debug msg re-created*/,
    off:  function(){},
-   on:   this.deb,
    sync: function(settings){//{method,format,url,params,callback}
       var xhr=new XMLHttpRequest(),params;
 
       xhr.open(settings.method,settings.url,true);
+      xhr.withCredentials=true;
       xhr.responseType=settings.format;
       xhr.onreadystatechange=function(e){
          if(this.readyState===4 && this.status===200){
@@ -153,7 +155,7 @@ iyona={
             if(typeof response==="string"&&settings.format==="json")response=JSON.parse(response);//wen setting responseType to json does not work
             if(typeof settings.callback==="function")settings.callback(response);
          }
-      }//xhr.onload=function(e){iyona.deb("III",e,this.readyState,this.status,this.response);};
+      }//xhr.onload=function(e){iyona.on("III",e,this.readyState,this.status,this.response);};
 
       if(typeof settings.params==="object"){
          xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");params=JSON.stringify(settings.params);
@@ -184,8 +186,8 @@ dynamis={
       var value,isChrome=(typeof chrome !== "undefined" && typeof chrome.app.window!=="undefined");
       if(typeof chrome!=="undefined"&&chrome.hasOwnProperty("storage")&&_local===true){chrome.storage.local.get(_key,function(obj){return obj[_key];});value=sessionStorage.getItem(_key);return (value&&value.indexOf("{")!==-1)?JSON.parse(value):value;}
       else if(typeof chrome!=="undefined"&&chrome.hasOwnProperty("storage")&&!_local){chrome.storage.sync.get(_key,function(obj){return obj[_key];});value=sessionStorage.getItem(_key);return (value&&value.indexOf("{")!==-1)?JSON.parse(value):value;}
-      else if(_local===true&&!isChrome){value=localStorage.getItem(_key);return (value&&value.indexOf("{")!==-1)?JSON.parse(value):value;}
-      else{value=sessionStorage.getItem(_key);return (value&&value.indexOf("{")!==-1)?JSON.parse(value):value;}//endif
+      else if(_local===true&&!isChrome){value=localStorage.getItem(_key);return (value&&value.indexOf("{")!==-1 || value&&value.indexOf("[")!=-1)?JSON.parse(value):value;}
+      else{value=sessionStorage.getItem(_key);return (value&&value.indexOf("{")!==-1 || value&&value.indexOf("[")!=-1)?JSON.parse(value):value;}//endif
    },
    del:function(_key,_local){var isChrome=(typeof chrome !== "undefined" && typeof chrome.app.window!=="undefined");
       if(typeof chrome!=="undefined"&&chrome.hasOwnProperty("storage")&&_local===true){chrome.storage.local.remove(_key);sessionStorage.removeItem(_key);}
@@ -201,8 +203,14 @@ dynamis={
    }
 };
 //============================================================================//
-(function(){var settings = new configuration();settings.config(); })();//run the configurations
+(function(){(new configuration()).config(); })();//run the configurations
 _$=function(element){if(typeof element==="string")return angular.element(document.querySelectorAll(element)); else return angular.element(element);};
+//============================================================================//
+function registerUser(row){
+   var USER_NAME={"operarius":row['username'],"licencia":row['aditum'],"nominis":row['name'],"jesua":row['jesua'],"procurator":row['procurator'],"cons":row["sess"],"mail":row['email'],"avatar":row['img']};
+   dynamis.set("USER_NAME",USER_NAME);dynamis.set("USER_NAME",USER_NAME,true);//todo:add the remember me option
+   (new configuration()).config();//when login in run setup of default setting, necessary incase of logoff
+}
 //============================================================================//
 /*
  * check if the browser supports html5 validation
@@ -225,7 +233,7 @@ function hasFormValidation() {
  * @return void
  */
 function load_script(urls,sync,position,fons){
-   var s,ele,c,url;iyona.deb("LOADS",urls, typeof urls);
+   var s,ele,c,url;iyona.on("LOADS",urls, typeof urls);
    var script=document.createElement('script');
    if(typeof urls==="string") url=urls;
    else {url=urls[0]; urls.shift();}
@@ -243,35 +251,6 @@ function load_script(urls,sync,position,fons){
    script.onreadystatechange = function(){iyona.info("Loaded script StateChange "+url);};
    script.onload = function(){if(typeof urls==="object"&&urls.length>0) load_script(urls,sync,position,fons);};;
    ele.appendChild(script);
-}
-//============================================================================//
-/**
- * get the size of an object
- *
- * It will verify all the variable sent to the function
- * @author tomwrong
- * @category object,size
- * @see http://stackoverflow.com/questions/1248302/javascript-object-size
- * @return bytes
- */
-function objectSize(object) {
-    var objectList=[];var stack=[object];var bytes=0; var cnt=0; var i;
-    while ( stack.length ) {
-        var value = stack.pop();
-        if ( typeof value === 'boolean') {bytes += 4;}
-        else if(typeof value === 'string') {bytes += value.length * 2;}
-        else if(typeof value === 'number') {bytes += 8;}
-        else if(typeof value === 'object'&& objectList.indexOf( value ) === -1)
-        {
-           objectList.push( value );
-           for( i in value ){
-              stack.push( value[ i ] );
-              cnt++;
-              if(cnt>500)return bytes;
-           }
-        }
-    }
-    return bytes;
 }
 //============================================================================//
 /**
@@ -361,10 +340,10 @@ function callWorker(option,callback){
          "procus":dynamis.get("USER_NAME").singularis,
          "moli":moli,
          "DB_VERSION":sessionStorage.DB_VERSION,
-         "eternalScope":dynamis.get("eternalScope",true),
+         "eternalScope":dynamis.get("eternal",true),
          "SITE_SERVICE":sessionStorage.SITE_SERVICE,
          "SITE_MILITIA":sessionStorage.SITE_MILITIA
-      },option);
+      },option);//ce si vas limiter l'access a ceux qui sont enregistrer seulment.
    if(window.Worker&&impetroUser()){
       var notitiaWorker=new Worker("js/biliotheca/worker.notitia.js");
       notitiaWorker.postMessage(opt);
@@ -391,26 +370,26 @@ function impetroUser(){
 function setQuaerere(mensa,res,tau,consuetudinem) {
     var procus=impetroUser(),moli=screen.height*screen.width,cons=consuetudinem||0;
     var quaerere={"eternal":res,"Tau":tau,"mensa":mensa,"procus":procus.jesua||0,"moli":moli,"consuetudinem":cons,"cons":procus.cons||0,"location":sessionStorage.SITE_LOCA};
-    dynamis.set("quaerere",JSON.stringify(quaerere));
+    dynamis.set("quaerere",quaerere);
     return quaerere;
 }
 //=============================================================================//
 function checkConnection() {
    var networkState;
-   if(typeof navigator.connection!=="undefined")var networkState = navigator.connection.type;
-   else if(typeof navigator.network!=="undefined")var networkState = navigator.network.connection.type;
-   else return navigator.onLine;
+   if(typeof navigator.connection!=="undefined")networkState = navigator.connection.type;
+   else if(typeof navigator.network!=="undefined")networkState = navigator.network.connection.type;
+   else networkState = navigator.onLine;
 
-
-   var states = {};
-   states[Connection.UNKNOWN] = 'an Unknown connection';
-   states[Connection.ETHERNET] = 'an Ethernet connection';
-   states[Connection.WIFI] = 'a WiFi connection';
-   states[Connection.CELL_2G] = 'a Cell 2G connection';
-   states[Connection.CELL_3G] = 'a Cell 3G connection';
-   states[Connection.CELL_4G] = 'a Cell 4G connection';
-   states[Connection.NONE] = 'with No network connection';
-   iyona.info('Connection type is ' + states[networkState],networkState);
+   var states = {}; var Connect=typeof Connection!=="undefined"?Connection:{};
+   states[Connect.UNKNOWN] = 'an Unknown connection';
+   states[Connect.ETHERNET] = 'an Ethernet connection';
+   states[Connect.WIFI] = 'a WiFi connection';
+   states[Connect.CELL_2G] = 'a Cell 2G connection';
+   states[Connect.CELL_3G] = 'a Cell 3G connection';
+   states[Connect.CELL_4G] = 'a Cell 4G connection';
+   states[Connect.NONE] = 'with No network connection';
+   var tmp = states[networkState]||networkState;
+   iyona.info('Connection type is ' + tmp,networkState);
    return networkState;
 
 }
@@ -442,6 +421,35 @@ function objSearch(ele,value){
 }
 //============================================================================//
 /**
+ * get the size of an object
+ *
+ * It will verify all the variable sent to the function
+ * @author tomwrong
+ * @category object,size
+ * @see http://stackoverflow.com/questions/1248302/javascript-object-size
+ * @return bytes
+ */
+function objectSize(object) {
+    var objectList=[];var stack=[object];var bytes=0; var cnt=0; var i;
+    while ( stack.length ) {
+        var value = stack.pop();
+        if ( typeof value === 'boolean') {bytes += 4;}
+        else if(typeof value === 'string') {bytes += value.length * 2;}
+        else if(typeof value === 'number') {bytes += 8;}
+        else if(typeof value === 'object'&& objectList.indexOf( value ) === -1)
+        {
+           objectList.push( value );
+           for( i in value ){
+              stack.push( value[ i ] );
+              cnt++;
+              if(cnt>500)return bytes;
+           }
+        }
+    }
+    return bytes;
+}
+//============================================================================//
+/**
  * calculate the date difference and returns the value in human language.
  * @author fredtma
  * @version 0.5
@@ -464,7 +472,37 @@ function timeDifference(t) {
     return set;
 }
 //============================================================================//
-//@http://stackoverflow.com/questions/3749231/download-file-using-javascript-jquery
+fileErrorHandler=function(e) {
+  var msg = '';
+
+  switch (e.code) {
+    case FileError.QUOTA_EXCEEDED_ERR:
+      msg = 'QUOTA_EXCEEDED_ERR';
+      break;
+    case FileError.NOT_FOUND_ERR:
+      msg = 'NOT_FOUND_ERR';
+      break;
+    case FileError.SECURITY_ERR:
+      msg = 'SECURITY_ERR';
+      break;
+    case FileError.INVALID_MODIFICATION_ERR:
+      msg = 'INVALID_MODIFICATION_ERR';
+      break;
+    case FileError.INVALID_STATE_ERR:
+      msg = 'INVALID_STATE_ERR';
+      break;
+    default:
+      msg = 'Unknown Error';
+      break;
+  };
+
+  console.log('Error: ' + msg,e);
+}
+//============================================================================//
+/*
+ * @http://stackoverflow.com/questions/3749231/download-file-using-javascript-jquery@
+ * download by creating iframe and a required link
+*/
 function downloadURL(url) {
     var hiddenIFrameID = 'hiddenDownloader',
         iframe = document.getElementById(hiddenIFrameID);
@@ -475,7 +513,26 @@ function downloadURL(url) {
         document.body.appendChild(iframe);
     }
     iframe.src = url;
+    var win = window.open(url, '_blank');win.focus();
 };
+//============================================================================//
+/*
+ * http://stackoverflow.com/questions/4845215/making-a-chrome-extension-download-a-file
+ * @param {string} url
+ * @param {string} filename
+ * @returns null
+ * download via url by creating a DOM link and clicking it
+ */
+
+function downloadLINK(url,filename){
+   var a = document.createElement('a');
+   a.href = url;
+   a.download = filename;
+   a.style.display = 'none';
+   document.body.appendChild(a);
+   a.click();
+   a=null;
+}
 //============================================================================//
 /**
  * creates a unique id based upon time
@@ -504,13 +561,52 @@ function eternalCall(node,display){
    var eternal    = dynamis.get("eternal",true);
    if(!eternal) return false;
    var curNode    = eternal[node];
-   var curMensa   = curNode.mensa;
-   var curDisplay = curNode[display];
-   var curTitle   = curDisplay.title;
-   return {"scope":curNode,"mensa":curMensa,"display":curDisplay,"title":curTitle};
+   return {"scope":curNode,"mensa":curNode.mensa,"display":curNode[display],"title":curNode[display].title};
 }
 //============================================================================//
+/**
+ * similar to PHP issset function, it will test if a variable is empty
+ * @author fredtma
+ * @version 0.8
+ * @category variable
+ * @return bool
+ */
+function isset() {
+   var a=arguments,l=a.length,i=0;
+   if (l===0) {return false;}//end if
+   while (i!=l) {if (a[i]===null || typeof(a[i])==='undefined') {return false;} else {i++;}}
+   return true;
+}//end function
+//============================================================================//
+/*
+ * Used to retrieve the value of a variable that is not an object
+ */
+function isfull(val){
+   if(typeof val!=="object" && typeof val!=="undefined" && val!==null) return true; else return false;
+}
+//============================================================================//
+//check element structure to find value in current form and alpha form
+function isalpha(obj){
+   if(isfull(obj)) return obj;
+   else if(isset(obj)&&isfull(obj.alpha)) return obj.alpha;
+   return false;
+}
+//============================================================================//
+//alphamert is used to merge object with the alpha property
+function alphaMerge(map,val,$scope){
 
+   for(var key in val){//merge the result with defaultScope setting
+      if (val[key]!==null&&isset(map[key])&&map[key].hasOwnProperty("alpha")){
+         //for enumerators get index
+         iyona.off("Key",map[key],$scope.father[key],val[key]);
+         if(typeof map[key].enum!=="undefined") {$scope.father[key].alpha = (typeof val[key]==="string")?map[key].enum.indexOf(val[key]):val[key];}
+         else $scope.father[key].alpha = isalpha(val[key]);
+      }
+      else $scope.father[key]=val[key];
+   }
+   return $scope;
+}
+//============================================================================//
 
 //============================================================================//
 //GOOGLE API USER DETAILS                                                     //
@@ -557,7 +653,7 @@ function GPLUS_USER() {
       if (!error && status === 200) {
          that.user_info = JSON.parse(response);//displayName,image
          that.callFunction(that.user_info,that.access_token,true);
-         iyona.deb("AUTO LOGIN",that.user_info,that.access_token);
+         iyona.on("AUTO LOGIN",that.user_info,that.access_token);
       } else {
          that.user_info = {"id":0,"type":0,"emails":[{"value":0}]};
          that.callFunction(that.user_info,error, false);
@@ -579,7 +675,6 @@ function GPLUS_USER() {
       });
    };
 };
-
 
 //============================================================================//
 //FETCH IMAGE

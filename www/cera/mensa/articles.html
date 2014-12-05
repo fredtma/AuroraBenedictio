@@ -7,18 +7,18 @@
         <button class="button button-clear " ng-click="search=null">Cancel</button>
       </div>
       <div class="item item-divider item-icon-left item-button-right">
-         <i class="icon ion-archive"></i>
+         <i class="icon ion-ios7-pricetags"></i>
          List of Articles
          <button class="list button button-clear button-assertive" style="right:60px;" ng-click="service.deleteItem = !service.deleteItem"><i class="icon ion-close-circled icon-shadow"></i></button>
-         <button class="list button button-clear button-balanced" ui-sref="call.article({jesua:'create','field':'new item','search':'sub'})"><i class="icon ion-plus-circled icon-shadow"></i></button>
+         <button class="list button button-clear button-balanced" ui-sref="call.article({jesua:'create','field':'sub','search':'new item'})"><i class="icon ion-plus-circled icon-shadow"></i></button>
       </div>
       <ion-list show-reorder="false" can-swipe="true" show-delete="service.deleteItem" >
          <ion-item ng-repeat="father in generations|filter:search" href="#/call/article/{{father.sub}}/article/sub" class="item item-thumbnail-left item-text-wrap">
             <img ng-src="{{father.path}}" /><h2 ng-bind="father.description"></h2><p ng-bind="father.location" style="font-size:0.8em;color:#aaa;"></p>
-            <blockquote class="infoblock">Status: <strong ng-bind="father.status"></strong><br/>Assign to: <strong ng-bind="father.assign"></strong><br/>Importance: <strong ng-bind="father.urgency"></strong></blockquote>
+            <blockquote style="width:200px;" class="infoblock">Status: <strong ng-bind="father.status"></strong><br/>Assign to: <strong ng-bind="father.assign"></strong><br/>Importance: <strong ng-bind="father.urgency"></strong></blockquote>
             <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(article, $fromIndex, $toIndex)"></ion-reorder-button>
-            <ion-option-button ng-click="module.delete(father.jesua,$index)" class=""><a style="padding-top:15px;" class="button button-icon icon ion-close-circled assertive"></a> </ion-option-button>
-            <ion-delete-button class="ion-close-circled" ng-click="module.delete(father.jesua,$index)"></ion-delete-button>
+            <ion-option-button ng-click="module.delete(father.sub,$index)" class=""><a style="padding-top:15px;" class="button button-icon icon ion-close-circled assertive"></a> </ion-option-button>
+            <ion-delete-button class="ion-close-circled" ng-click="module.delete(father.sub,$index)"></ion-delete-button>
          </ion-item>
       </ion-list>
 

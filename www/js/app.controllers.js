@@ -4,10 +4,7 @@ angular.module('AlphaOmega.controllers', [])
 .controller('ProfileCtrl',['$scope','crud','$state','online',ProfileCtrl])
 .controller('ProfileListCtrl',['$scope','crud',ProfileListCtrl])
 .controller('ArticleCtrl',['$scope','crud',ArticlesCtrl])
-.controller('ArticleDetailsCtrl',['$scope','$stateParams','$ionicActionSheet',function(){}])
-.controller('ArticleLogsCtrl',['$scope','crud','helper','$stateParams','$ionicSlideBoxDelegate','$timeout',ArticleLogsCtrl])
-.controller('articleListLogsCtrl',['$scope','$ionicSlideBoxDelegate','crud',articleListLogsCtrl])
-.controller('logViewsCtrl',['$scope','$ionicSideMenuDelegate','$ionicLoading','$ionicPopup',logViewsCtrl]);
+.controller('ArticleLogsCtrl',['$scope','crud','helper','$stateParams','$ionicSlideBoxDelegate','$timeout',ArticleLogsCtrl]);
 
 //============================================================================//
 /**
@@ -21,13 +18,13 @@ function AppCtrl($scope,helper) {
    $scope.goTo=helper.goTo;
    $scope.sideMenu=true;
    var row = impetroUser();
-   if(row)$scope.profile = {"givenname":row['nominis'],"position":row['operarius'],"avatar":"img/default.jpg","jesua":row['jesua']};
+   if(row)$scope.profile = {"givenname":row['nominis'],"position":row['operarius'],"avatar":row['avatar']||"img/default.jpg","jesua":row['jesua']};
 }
 //============================================================================//
 /**
  * the controller for the Dashboard
  */
-function DashCtrl($scope,$ionicModal,online) {iyona.on("Dasssssh");
+function DashCtrl($scope,$ionicModal,online) {
    $scope.father = {};
    $ionicModal
    .fromTemplateUrl('cera/login.html',{"scope":$scope,"animation":"slide-in-up","focusFirstInput":true,"backdropClickToClose":false,"hardwareBackButtonClose":false})
@@ -48,7 +45,7 @@ function DashCtrl($scope,$ionicModal,online) {iyona.on("Dasssssh");
    $scope.module.login  =function(){
       var u,p;
 
-      u=$scope.father.username;p=md5($scope.father.password);//aliquis
+      u=$scope.father.username;p=navigator.camera?$scope.father.password:md5($scope.father.password);//aliquis
       if(!u || !p) {$scope.service.msg = "Please enter the username/password."; return false;}
       sessionStorage.SITE_ALIQUIS = sessionStorage.SITE_ALIQUIS||'http://demo.xpandit.co.za/aura/aliquis';
       online.post(sessionStorage.SITE_ALIQUIS,{"u":u,"p":p},function(server){
@@ -121,7 +118,7 @@ function ArticlesCtrl($scope,crud) {
 /**
  * the controller for the article logs
  */
-function ArticleLogsCtrl($scope,crud,helper,$stateParams,$ionicSlideBoxDelegate,$timeout) {
+function ArticleLogsCtrl($scope,crud,helper,$stateParams,$ionicSlideBoxDelegate,$timeout) {iyona.info("Controller...");
    crud.set($scope,'article-logs','details');
    if($stateParams.field!=="new item"){$scope.father.barcode=$stateParams.field;}
 
@@ -129,7 +126,8 @@ function ArticleLogsCtrl($scope,crud,helper,$stateParams,$ionicSlideBoxDelegate,
       var d = new Date().getTime(),curIndx=$ionicSlideBoxDelegate.currentIndex();
       $scope.father.sub = $scope.father.sub||md5(d+'Jesus Christ is Lord');
       $scope.father.code= $scope.father.code||uRand(5,true,true,true);
-      alphaMerge($scope.father,$scope.generations[curIndx],$scope);
+      $scope.father.barcode= $scope.father.barcode||($stateParams.search!=="new item")?$stateParams.search:null;
+      alphaMerge($scope.father,$scope.generations[curIndx],$scope);//places the value of the generation saved in father's
       callback(curIndx);//call the service function
    }
    $scope.module.delta=function(callback){
@@ -138,10 +136,11 @@ function ArticleLogsCtrl($scope,crud,helper,$stateParams,$ionicSlideBoxDelegate,
       callback.call();//call the service function
    }
    $scope.module.slideHasChanged=function(){
-      var curIndx=$ionicSlideBoxDelegate.currentIndex();
-      iyona.on('$ionicSlideBoxDelegate',$ionicSlideBoxDelegate.slidesCount(),curIndx,$scope.generations[curIndx].jesua);
+      var curIndx=$ionicSlideBoxDelegate.currentIndex(),jesua = isalpha($scope.generations[curIndx].jesua);
+      iyona.on('$ionicSlideBoxDelegate',$ionicSlideBoxDelegate.slidesCount(),curIndx,$scope.generations[curIndx].jesua, isalpha($scope.generations[curIndx].jesua));
       $scope.formScope = $scope.$parent.formScope[curIndx];
-      if($ionicSlideBoxDelegate.slidesCount()==curIndx+1 && $scope.generations[curIndx].jesua){//last slide and it must hv Jesua
+      //last slide and it must hv Jesua
+      if($ionicSlideBoxDelegate.slidesCount()==curIndx+1 && $scope.generations[curIndx].jesua){
          var newObject = {};
          angular.copy($scope.generations[curIndx],newObject);
          newObject.description= "Add a new description...";
@@ -151,57 +150,33 @@ function ArticleLogsCtrl($scope,crud,helper,$stateParams,$ionicSlideBoxDelegate,
          $scope.generations.push(newObject);
          iyona.info("New Slide",$scope.generations[curIndx],newObject,curIndx);
          $timeout(function(){$ionicSlideBoxDelegate.update();});
-      } else if(!$scope.generations[curIndx].jesua){
+      }
+      if(jesua===false){
          $scope.module.action = function(){helper.action('Create ');};
          $scope.module.submit = crud.submitFunction.new;
-      } else if($scope.generations[curIndx].jesua){
+      } else if(jesua){
          $scope.module.action = function(){helper.action('Update ');};
          $scope.module.submit = crud.submitFunction.old;
       }
    }
    $scope.$on("readyList",function(data,notitia){
-      var tmp1 = eternalCall('article-logs','details').display.fields,tmp2 = eternalCall('article-logs','details').display.fields;
-      tmp1.description = "Add a descripition here...";
+      //creates two record with different values, with the same sub and status, urgency, assign
+      var tmp1 = eternalCall('article-logs','details').display.fields,tmp2 = eternalCall('article-logs','details').display.fields,d = new Date().getTime(),sub = md5(d+'Jesus Christ is Lord');
+      tmp1.status = tmp1.urgency = tmp1.assign = 1;
+      tmp2.status = tmp2.urgency = tmp2.assign = 1;
+      tmp1.sub = sub; tmp2.sub = sub;
       if(notitia.iota instanceof Array === false)$scope.generations = [tmp1,tmp2];
+      if($scope.generations.length===1){//when there is only one object
+         var newObject={};
+         angular.copy($scope.generations[0],newObject);
+         newObject.description= "Add a new description...";
+         newObject.location   = "Add a new Location...";
+         newObject.path       = null;
+         newObject.jesua      = null;
+         $scope.generations.push(newObject);
+      }
       iyona.on('$scope.generations',$scope.generations,notitia.iota.length,notitia.iota,notitia.iota instanceof Array);
       $timeout(function(){$ionicSlideBoxDelegate.update();});
    });
 }
 //============================================================================//
-/**
- * the controller for the article logs
- */
-function articleListLogsCtrl($scope,$ionicSlideBoxDelegate,crud) {
-   crud.set($scope,'article-logs','details');
-   var num,article,articles = $scope.articles.data;
-
-   $scope.module.alpha=function(callback){
-      $scope.father.code = $scope.father.code||uRand(5,true,true,true);iyona.on("ALPHA",$scope.father);
-      callback.call();//call the service function
-   }
-   $scope.$on("readyList",function(server){
-      $ionicSlideBoxDelegate.update();
-   });
-}
-//============================================================================//
-/**
- * the controller for the article
- */
-function logViewsCtrl($scope,$ionicSideMenuDelegate,$ionicLoading,$ionicPopup) {
-   //disable and enable the slide menu
-   $ionicSideMenuDelegate.canDragContent(false);
-//   $scope.$on("$stateChangeStart",function(ev,newLoc,oldLoc){ console.warn("Change side menu"); $ionicSideMenuDelegate.canDragContent(true);});
-
-   //$ionicLoading.show({"template":"<strong>Laoding</strong>...","delay":"0","duration":2000})
-   //function to count the changes of the slides
-   $scope.slideHasChanged=function(index){console.log("the chosen one is ",index);};
-
-   //capture an image
-   $scope.getPicture=function(e){
-      if(typeof navigator.camera === "undefined") {console.error("object not there ",navigator); return false;}
-      navigator.camera.getPicture(
-         function(img){console.info("Capturing image",Camera); e.target.src = "data:image/jpeg;base64,"+img; },
-         function(err){$ionicPopup.alert({"title":"Image Capture","template":"Could not capture the image::"+err}).then(function(){console.info("The image was not capture::"+err);}); },
-         {"quality":100,"destinationType":Camera.DestinationType.DATA_URL,"correctOrientation":true});
-   };
-}//
