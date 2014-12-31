@@ -14,7 +14,7 @@ if(typeof Build!=="undefined" && typeof WebView!=="undefined" && Build.VERSION.S
 
    config.$inject = ["$stateProvider","$urlRouterProvider","$httpProvider","$ionicConfigProvider","$compileProvider"];
    function config($stateProvider,$urlRouterProvider,$httpProvider,$ionicConfigProvider,$compileProvider) {
-      $httpProvider.defaults.withCredentials = true;
+      $httpProvider.defaults.withCredentials = true;//allow cookies
       $ionicConfigProvider.prefetchTemplates(true);
       $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|blob|content):|data:image\//);
       $stateProvider

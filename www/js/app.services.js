@@ -338,7 +338,9 @@ function helper($ionicPopup,$ionicActionSheet,$state){
 
    }
    function reorderItem(item,from,to){
-
+      //Move the item in the array
+      $scope.generations.splice(from, 1);
+      $scope.generations.splice(to, 0, item);
       iyona.on("Ordering",item,from,to);
    }
    function set(scope,node,display){

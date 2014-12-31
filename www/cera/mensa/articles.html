@@ -16,7 +16,7 @@
          <ion-item ng-repeat="father in generations|filter:search" href="#/call/article/{{father.sub}}/article/sub" class="item item-thumbnail-left item-text-wrap">
             <img ng-src="{{father.path}}" /><h2 ng-bind="father.description"></h2><p ng-bind="father.location" style="font-size:0.8em;color:#aaa;"></p>
             <blockquote style="width:200px;" class="infoblock">Status: <strong ng-bind="father.status"></strong><br/>Assign to: <strong ng-bind="father.assign"></strong><br/>Importance: <strong ng-bind="father.urgency"></strong></blockquote>
-            <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(article, $fromIndex, $toIndex)"></ion-reorder-button>
+            <ion-reorder-button class="ion-navicon" on-reorder="reorderItem(father, $fromIndex, $toIndex)"></ion-reorder-button>
             <ion-option-button ng-click="module.delete(father.sub,$index)" class=""><a style="padding-top:15px;" class="button button-icon icon ion-close-circled assertive"></a> </ion-option-button>
             <ion-delete-button class="ion-close-circled" ng-click="module.delete(father.sub,$index)"></ion-delete-button>
          </ion-item>
